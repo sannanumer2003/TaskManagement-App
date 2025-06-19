@@ -1,116 +1,49 @@
 
 import { useState } from "react";
-import { Plus, Trash2, LogOut, User } from "lucide-react";
+import { Plus, Trash2, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-
-interface Task {
-  id: string;
-  text: string;
-  completed: boolean;
-  createdAt: Date;
-}
+import { useAuth } from "@/hooks/useAuth";
+import { useTasks } from "@/hooks/useTasks";
+import AuthPage from "./Auth";
 
 const Index = () => {
-  // Mock authentication state - will be replaced with real auth
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<{ email: string } | null>(null);
-  
-  // Task management state
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const { user, loading: authLoading, signOut } = useAuth();
+  const { tasks, loading: tasksLoading, addTask, toggleTask, deleteTask } = useTasks(user?.id);
   const [newTask, setNewTask] = useState("");
 
-  // Mock auth functions - will be replaced with Supabase auth
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-    setUser({ email: "demo@example.com" });
-  };
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
+            <Plus className="h-8 w-8 text-white animate-spin" />
+          </div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const handleSignUp = () => {
-    setIsAuthenticated(true);
-    setUser({ email: "demo@example.com" });
-  };
+  if (!user) {
+    return <AuthPage onAuthSuccess={() => {}} />;
+  }
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setUser(null);
-    setTasks([]);
-  };
-
-  // Task management functions
-  const addTask = () => {
+  const handleAddTask = async () => {
     if (newTask.trim()) {
-      const task: Task = {
-        id: Date.now().toString(),
-        text: newTask.trim(),
-        completed: false,
-        createdAt: new Date(),
-      };
-      setTasks([...tasks, task]);
+      await addTask(newTask);
       setNewTask("");
     }
   };
 
-  const deleteTask = (taskId: string) => {
-    setTasks(tasks.filter(task => task.id !== taskId));
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleAddTask();
+    }
   };
-
-  const toggleTask = (taskId: string) => {
-    setTasks(tasks.map(task => 
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    ));
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardHeader className="text-center space-y-4">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <Plus className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                TaskFlow
-              </CardTitle>
-              <p className="text-gray-600 mt-2">
-                Simple, beautiful task management
-              </p>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="text-center text-sm text-gray-500 mb-6">
-              <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 border-yellow-200">
-                Demo Mode - Connect Supabase for real authentication
-              </Badge>
-            </div>
-            <Button 
-              onClick={handleLogin}
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
-              size="lg"
-            >
-              <User className="mr-2 h-4 w-4" />
-              Demo Login
-            </Button>
-            <Button 
-              onClick={handleSignUp}
-              variant="outline" 
-              className="w-full border-gray-300 hover:bg-gray-50 transition-all duration-200"
-              size="lg"
-            >
-              Demo Sign Up
-            </Button>
-            <p className="text-xs text-center text-gray-500 mt-4">
-              In demo mode, tasks are only stored temporarily
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -125,11 +58,11 @@ const Index = () => {
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 TaskFlow
               </h1>
-              <p className="text-sm text-gray-600">{user?.email}</p>
+              <p className="text-sm text-gray-600">{user.email}</p>
             </div>
           </div>
           <Button 
-            onClick={handleLogout}
+            onClick={signOut}
             variant="outline" 
             size="sm"
             className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
@@ -156,11 +89,12 @@ const Index = () => {
                 onChange={(e) => setNewTask(e.target.value)}
                 placeholder="What needs to be done?"
                 className="flex-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                onKeyPress={(e) => e.key === 'Enter' && addTask()}
+                onKeyPress={handleKeyPress}
               />
               <Button 
-                onClick={addTask}
+                onClick={handleAddTask}
                 className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all duration-200"
+                disabled={!newTask.trim()}
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Add
@@ -182,7 +116,14 @@ const Index = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {tasks.length === 0 ? (
+            {tasksLoading ? (
+              <div className="text-center py-8">
+                <div className="mx-auto w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-2">
+                  <Plus className="h-4 w-4 text-white animate-spin" />
+                </div>
+                <p className="text-gray-500">Loading tasks...</p>
+              </div>
+            ) : tasks.length === 0 ? (
               <div className="text-center py-12">
                 <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                   <Plus className="h-8 w-8 text-gray-400" />
@@ -198,7 +139,7 @@ const Index = () => {
                       <input
                         type="checkbox"
                         checked={task.completed}
-                        onChange={() => toggleTask(task.id)}
+                        onChange={() => toggleTask(task.id, !task.completed)}
                         className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
                       />
                       <span 
@@ -211,7 +152,7 @@ const Index = () => {
                         {task.text}
                       </span>
                       <span className="text-xs text-gray-400">
-                        {task.createdAt.toLocaleDateString()}
+                        {new Date(task.created_at).toLocaleDateString()}
                       </span>
                       <Button
                         onClick={() => deleteTask(task.id)}
