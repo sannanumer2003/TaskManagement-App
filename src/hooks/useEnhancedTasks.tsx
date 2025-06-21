@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -23,7 +24,7 @@ export const useEnhancedTasks = (userId: string | undefined) => {
         .from("tasks")
         .select("*")
         .eq("user_id", userId)
-        .order("order_index", { ascending: true });
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       
@@ -164,31 +165,6 @@ export const useEnhancedTasks = (userId: string | undefined) => {
     }
   };
 
-  const reorderTasks = async (reorderedTasks: Task[]) => {
-    try {
-      const updates = reorderedTasks.map((task, index) => ({
-        id: task.id,
-        order_index: index + 1,
-      }));
-
-      for (const update of updates) {
-        await supabase
-          .from("tasks")
-          .update({ order_index: update.order_index })
-          .eq("id", update.id);
-      }
-
-      await fetchTasks();
-    } catch (error) {
-      console.error("Error reordering tasks:", error);
-      toast({
-        title: "Error",
-        description: "Failed to reorder tasks",
-        variant: "destructive",
-      });
-    }
-  };
-
   const markAllCompleted = async () => {
     try {
       const incompleteTasks = tasks.filter(task => !task.completed);
@@ -243,7 +219,6 @@ export const useEnhancedTasks = (userId: string | undefined) => {
     updateTask,
     toggleTask,
     deleteTask,
-    reorderTasks,
     markAllCompleted,
     refetch: fetchTasks,
   };

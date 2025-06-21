@@ -11,7 +11,6 @@ import AuthPage from "./Auth";
 import TaskForm from "@/components/TaskForm";
 import TaskFilters from "@/components/TaskFilters";
 import TaskItem from "@/components/TaskItem";
-import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -25,7 +24,6 @@ const Index = () => {
     updateTask,
     toggleTask, 
     deleteTask,
-    reorderTasks,
     markAllCompleted
   } = useEnhancedTasks(user?.id);
   const { preferences, updateTheme } = useUserPreferences(user?.id);
@@ -57,16 +55,6 @@ const Index = () => {
       category: 'Personal',
       priority: 'Medium',
     });
-  };
-
-  const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
-
-    const items = Array.from(tasks);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    reorderTasks(items);
   };
 
   const taskCounts = {
@@ -180,31 +168,18 @@ const Index = () => {
                     </p>
                   </div>
                 ) : (
-                  <DragDropContext onDragEnd={handleDragEnd}>
-                    <Droppable droppableId="tasks">
-                      {(provided) => (
-                        <div
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                          className="space-y-3"
-                        >
-                          {tasks.map((task, index) => (
-                            <TaskItem
-                              key={task.id}
-                              task={task}
-                              index={index}
-                              onToggle={toggleTask}
-                              onDelete={deleteTask}
-                              onEdit={setEditingTask}
-                              onAddSubtask={handleAddSubtask}
-                              onUpdateTask={updateTask}
-                            />
-                          ))}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </DragDropContext>
+                  <div className="space-y-3">
+                    {tasks.map((task) => (
+                      <TaskItem
+                        key={task.id}
+                        task={task}
+                        onToggle={toggleTask}
+                        onDelete={deleteTask}
+                        onAddSubtask={handleAddSubtask}
+                        onUpdateTask={updateTask}
+                      />
+                    ))}
+                  </div>
                 )}
               </CardContent>
             </Card>
