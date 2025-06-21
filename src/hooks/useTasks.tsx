@@ -10,6 +10,15 @@ interface Task {
   created_at: string;
   updated_at: string;
   user_id: string;
+  due_date?: string;
+  reminder_enabled: boolean;
+  category: string;
+  priority: string;
+  order_index: number;
+  parent_task_id?: string;
+  is_subtask: boolean;
+  recurring_type: string;
+  last_completed_date?: string;
 }
 
 export const useTasks = (userId: string | undefined) => {

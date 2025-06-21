@@ -1,28 +1,45 @@
 
 import { useState } from "react";
-import { Plus, Trash2, LogOut } from "lucide-react";
+import { Plus, LogOut, Moon, Sun, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
-import { useTasks } from "@/hooks/useTasks";
+import { useEnhancedTasks } from "@/hooks/useEnhancedTasks";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { Task } from "@/types/task";
 import AuthPage from "./Auth";
+import TaskForm from "@/components/TaskForm";
+import TaskFilters from "@/components/TaskFilters";
+import TaskItem from "@/components/TaskItem";
+import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
-  const { tasks, loading: tasksLoading, addTask, toggleTask, deleteTask } = useTasks(user?.id);
-  const [newTask, setNewTask] = useState("");
+  const { 
+    tasks, 
+    allTasks,
+    loading: tasksLoading, 
+    filters,
+    setFilters,
+    addTask, 
+    updateTask,
+    toggleTask, 
+    deleteTask,
+    reorderTasks,
+    markAllCompleted
+  } = useEnhancedTasks(user?.id);
+  const { preferences, updateTheme } = useUserPreferences(user?.id);
+  
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
             <Plus className="h-8 w-8 text-white animate-spin" />
           </div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
         </div>
       </div>
     );
@@ -32,24 +49,45 @@ const Index = () => {
     return <AuthPage onAuthSuccess={() => {}} />;
   }
 
-  const handleAddTask = async () => {
-    if (newTask.trim()) {
-      await addTask(newTask);
-      setNewTask("");
-    }
+  const handleAddSubtask = async (parentId: string, text: string) => {
+    await addTask({
+      text,
+      parent_task_id: parentId,
+      is_subtask: true,
+      category: 'Personal',
+      priority: 'Medium',
+    });
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleAddTask();
-    }
+  const handleDragEnd = (result: DropResult) => {
+    if (!result.destination) return;
+
+    const items = Array.from(tasks);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    reorderTasks(items);
   };
+
+  const taskCounts = {
+    total: allTasks.length,
+    completed: allTasks.filter(t => t.completed).length,
+    remaining: allTasks.filter(t => !t.completed).length,
+  };
+
+  const completedThisWeek = allTasks.filter(task => {
+    if (!task.last_completed_date) return false;
+    const completedDate = new Date(task.last_completed_date);
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    return completedDate >= weekAgo;
+  }).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
               <Plus className="h-5 w-5 text-white" />
@@ -58,146 +96,195 @@ const Index = () => {
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 TaskFlow
               </h1>
-              <p className="text-sm text-gray-600">{user.email}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
             </div>
           </div>
-          <Button 
-            onClick={signOut}
-            variant="outline" 
-            size="sm"
-            className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
-          >
-            <LogOut className="h-4 w-4 mr-1" />
-            Logout
-          </Button>
+          
+          <div className="flex items-center gap-2">
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => updateTheme(preferences?.theme === 'dark' ? 'light' : 'dark')}
+              className="hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              {preferences?.theme === 'dark' ? 
+                <Sun className="h-4 w-4" /> : 
+                <Moon className="h-4 w-4" />
+              }
+            </Button>
+            
+            {/* Logout */}
+            <Button 
+              onClick={signOut}
+              variant="outline" 
+              size="sm"
+              className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
+            >
+              <LogOut className="h-4 w-4 mr-1" />
+              Logout
+            </Button>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        {/* Add Task Section */}
-        <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm mb-8">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-gray-800">
-              Add New Task
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-3">
-              <Input
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-                placeholder="What needs to be done?"
-                className="flex-1 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                onKeyPress={handleKeyPress}
-              />
-              <Button 
-                onClick={handleAddTask}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all duration-200"
-                disabled={!newTask.trim()}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
+        {/* Task Form */}
+        <TaskForm 
+          onAddTask={addTask}
+          editingTask={editingTask}
+          onUpdateTask={updateTask}
+          onCancelEdit={() => setEditingTask(null)}
+        />
+
+        {/* Filters */}
+        <TaskFilters
+          filters={filters}
+          onFiltersChange={setFilters}
+          taskCounts={taskCounts}
+          onMarkAllCompleted={markAllCompleted}
+        />
 
         {/* Tasks Section */}
-        <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-semibold text-gray-800">
-                Your Tasks
-              </CardTitle>
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {tasksLoading ? (
-              <div className="text-center py-8">
-                <div className="mx-auto w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-2">
-                  <Plus className="h-4 w-4 text-white animate-spin" />
-                </div>
-                <p className="text-gray-500">Loading tasks...</p>
-              </div>
-            ) : tasks.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <Plus className="h-8 w-8 text-gray-400" />
-                </div>
-                <p className="text-gray-500 text-lg mb-2">No tasks yet</p>
-                <p className="text-gray-400 text-sm">Add your first task above to get started!</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {tasks.map((task, index) => (
-                  <div key={task.id}>
-                    <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50/50 hover:bg-gray-100/50 transition-colors">
-                      <input
-                        type="checkbox"
-                        checked={task.completed}
-                        onChange={() => toggleTask(task.id, !task.completed)}
-                        className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
-                      />
-                      <span 
-                        className={`flex-1 text-sm ${
-                          task.completed 
-                            ? 'text-gray-500 line-through' 
-                            : 'text-gray-800'
-                        }`}
-                      >
-                        {task.text}
-                      </span>
-                      <span className="text-xs text-gray-400">
-                        {new Date(task.created_at).toLocaleDateString()}
-                      </span>
-                      <Button
-                        onClick={() => deleteTask(task.id)}
-                        variant="ghost"
-                        size="sm"
-                        className="text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Tasks List */}
+          <div className="lg:col-span-2">
+            <Card className="shadow-lg border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-200 flex items-center justify-between">
+                  Your Tasks
+                  <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
+                    Showing {tasks.length} of {allTasks.length} tasks
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {tasksLoading ? (
+                  <div className="text-center py-8">
+                    <div className="mx-auto w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-2">
+                      <Plus className="h-4 w-4 text-white animate-spin" />
                     </div>
-                    {index < tasks.length - 1 && <Separator className="my-2" />}
+                    <p className="text-gray-500 dark:text-gray-400">Loading tasks...</p>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Stats */}
-        {tasks.length > 0 && (
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold">{tasks.length}</div>
-                <div className="text-sm opacity-90">Total Tasks</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold">
-                  {tasks.filter(t => t.completed).length}
-                </div>
-                <div className="text-sm opacity-90">Completed</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold">
-                  {tasks.filter(t => !t.completed).length}
-                </div>
-                <div className="text-sm opacity-90">Remaining</div>
+                ) : tasks.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                      <Plus className="h-8 w-8 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
+                      {allTasks.length === 0 ? "No tasks yet" : "No tasks match your filters"}
+                    </p>
+                    <p className="text-gray-400 dark:text-gray-500 text-sm">
+                      {allTasks.length === 0 ? "Add your first task above to get started!" : "Try adjusting your search or filters"}
+                    </p>
+                  </div>
+                ) : (
+                  <DragDropContext onDragEnd={handleDragEnd}>
+                    <Droppable droppableId="tasks">
+                      {(provided) => (
+                        <div
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                          className="space-y-3"
+                        >
+                          {tasks.map((task, index) => (
+                            <TaskItem
+                              key={task.id}
+                              task={task}
+                              index={index}
+                              onToggle={toggleTask}
+                              onDelete={deleteTask}
+                              onEdit={setEditingTask}
+                              onAddSubtask={handleAddSubtask}
+                              onUpdateTask={updateTask}
+                            />
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </DragDropContext>
+                )}
               </CardContent>
             </Card>
           </div>
-        )}
+
+          {/* Analytics Sidebar */}
+          <div className="space-y-6">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 gap-4">
+              <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold">{taskCounts.total}</div>
+                  <div className="text-sm opacity-90">Total Tasks</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold">{taskCounts.completed}</div>
+                  <div className="text-sm opacity-90">Completed</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold">{taskCounts.remaining}</div>
+                  <div className="text-sm opacity-90">Remaining</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Weekly Progress */}
+            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Weekly Progress
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">{completedThisWeek}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Tasks completed this week</div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 dark:text-gray-400">Completion Rate</span>
+                    <span className="font-medium">
+                      {taskCounts.total > 0 ? Math.round((taskCounts.completed / taskCounts.total) * 100) : 0}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300"
+                      style={{ 
+                        width: `${taskCounts.total > 0 ? (taskCounts.completed / taskCounts.total) * 100 : 0}%` 
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 space-y-1 text-xs text-gray-600 dark:text-gray-400">
+                  <div className="flex justify-between">
+                    <span>High Priority:</span>
+                    <span>{allTasks.filter(t => t.priority === 'High' && !t.completed).length} remaining</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Due Today:</span>
+                    <span>
+                      {allTasks.filter(t => 
+                        t.due_date && 
+                        new Date(t.due_date).toDateString() === new Date().toDateString() && 
+                        !t.completed
+                      ).length} tasks
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </main>
     </div>
   );

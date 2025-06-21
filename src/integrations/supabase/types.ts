@@ -11,26 +11,85 @@ export type Database = {
     Tables: {
       tasks: {
         Row: {
+          category: string | null
           completed: boolean
           created_at: string
+          due_date: string | null
           id: string
+          is_subtask: boolean | null
+          last_completed_date: string | null
+          order_index: number | null
+          parent_task_id: string | null
+          priority: string | null
+          recurring_type: string | null
+          reminder_enabled: boolean | null
           text: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          category?: string | null
           completed?: boolean
           created_at?: string
+          due_date?: string | null
           id?: string
+          is_subtask?: boolean | null
+          last_completed_date?: string | null
+          order_index?: number | null
+          parent_task_id?: string | null
+          priority?: string | null
+          recurring_type?: string | null
+          reminder_enabled?: boolean | null
           text: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          category?: string | null
           completed?: boolean
           created_at?: string
+          due_date?: string | null
           id?: string
+          is_subtask?: boolean | null
+          last_completed_date?: string | null
+          order_index?: number | null
+          parent_task_id?: string | null
+          priority?: string | null
+          recurring_type?: string | null
+          reminder_enabled?: boolean | null
           text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_parent_task_id_fkey"
+            columns: ["parent_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          theme: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          theme?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          theme?: string | null
           updated_at?: string
           user_id?: string
         }
