@@ -11,7 +11,6 @@ import AuthPage from "./Auth";
 import TaskForm from "@/components/TaskForm";
 import TaskFilters from "@/components/TaskFilters";
 import TaskItem from "@/components/TaskItem";
-import TaskEditModal from "@/components/TaskEditModal";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -29,7 +28,6 @@ const Index = () => {
   } = useEnhancedTasks(user?.id);
   const { preferences, updateTheme } = useUserPreferences(user?.id);
   
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [showMobileForm, setShowMobileForm] = useState(false);
 
   if (authLoading) {
@@ -128,9 +126,9 @@ const Index = () => {
         <div className="hidden md:block">
           <TaskForm 
             onAddTask={addTask}
-            editingTask={editingTask}
+            editingTask={null}
             onUpdateTask={updateTask}
-            onCancelEdit={() => setEditingTask(null)}
+            onCancelEdit={() => {}}
           />
         </div>
 
@@ -219,7 +217,6 @@ const Index = () => {
                           onDelete={deleteTask}
                           onAddSubtask={handleAddSubtask}
                           onUpdateTask={updateTask}
-                          onEdit={setEditingTask}
                         />
                       </div>
                     ))}
@@ -314,19 +311,6 @@ const Index = () => {
       >
         <Plus className="h-6 w-6 text-white" />
       </button>
-
-      {/* Edit Task Modal */}
-      {editingTask && (
-        <TaskEditModal
-          task={editingTask}
-          isOpen={!!editingTask}
-          onClose={() => setEditingTask(null)}
-          onSave={(updates) => {
-            updateTask(editingTask.id, updates);
-            setEditingTask(null);
-          }}
-        />
-      )}
     </div>
   );
 };
