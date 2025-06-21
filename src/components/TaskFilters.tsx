@@ -24,15 +24,15 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
   const priorities = ['High', 'Medium', 'Low'];
 
   return (
-    <div className="space-y-6 p-6 glass-card border-0 shadow-xl rounded-2xl hover-lift">
+    <div className="space-y-6 p-6 glass-card border-0 shadow-lg rounded-2xl hover-lift">
       {/* Search Bar */}
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-accent/60 h-5 w-5" />
+        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 h-5 w-5" />
         <Input
           placeholder="Search your tasks..."
           value={filters.search}
           onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
-          className="pl-12 glass-input border-0 h-14 text-primary-accent placeholder:text-gray-500 focus:ring-2 focus:ring-primary-accent/30 transition-all duration-300 text-lg"
+          className="pl-12 premium-input h-14 text-slate-800 placeholder:text-slate-500 rounded-xl text-lg"
         />
       </div>
 
@@ -40,44 +40,44 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
       <div className="flex flex-wrap gap-4 items-center">
         <div className="flex items-center space-x-3">
           <Filter className="h-5 w-5 text-primary-accent" />
-          <Label className="text-sm font-semibold text-primary-accent">Filters:</Label>
+          <Label className="text-sm font-semibold text-slate-700">Filters:</Label>
         </div>
 
         {/* Category Filter */}
         <Select value={filters.category} onValueChange={(value) => onFiltersChange({ ...filters, category: value })}>
-          <SelectTrigger className="w-[140px] glass-input border-0 h-10 focus:ring-2 focus:ring-primary-accent/30">
+          <SelectTrigger className="w-[140px] premium-input h-10 rounded-xl">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
-          <SelectContent className="glass-card border-0">
-            <SelectItem value="all" className="hover:bg-primary-accent/10">All Categories</SelectItem>
+          <SelectContent className="modal-content border-0 rounded-xl shadow-lg">
+            <SelectItem value="all" className="hover:bg-slate-100 rounded-lg">All Categories</SelectItem>
             {categories.map(category => (
-              <SelectItem key={category} value={category} className="hover:bg-primary-accent/10">{category}</SelectItem>
+              <SelectItem key={category} value={category} className="hover:bg-slate-100 rounded-lg">{category}</SelectItem>
             ))}
           </SelectContent>
         </Select>
 
         {/* Priority Filter */}
         <Select value={filters.priority} onValueChange={(value) => onFiltersChange({ ...filters, priority: value })}>
-          <SelectTrigger className="w-[130px] glass-input border-0 h-10 focus:ring-2 focus:ring-primary-accent/30">
+          <SelectTrigger className="w-[130px] premium-input h-10 rounded-xl">
             <SelectValue placeholder="Priority" />
           </SelectTrigger>
-          <SelectContent className="glass-card border-0">
-            <SelectItem value="all" className="hover:bg-primary-accent/10">All Priorities</SelectItem>
+          <SelectContent className="modal-content border-0 rounded-xl shadow-lg">
+            <SelectItem value="all" className="hover:bg-slate-100 rounded-lg">All Priorities</SelectItem>
             {priorities.map(priority => (
-              <SelectItem key={priority} value={priority} className="hover:bg-primary-accent/10">{priority}</SelectItem>
+              <SelectItem key={priority} value={priority} className="hover:bg-slate-100 rounded-lg">{priority}</SelectItem>
             ))}
           </SelectContent>
         </Select>
 
         {/* Show Completed Toggle */}
-        <div className="flex items-center space-x-3 p-3 glass-input rounded-lg">
+        <div className="flex items-center space-x-3 p-3 premium-input rounded-xl">
           <Switch
             id="show-completed"
             checked={filters.showCompleted}
             onCheckedChange={(checked) => onFiltersChange({ ...filters, showCompleted: checked })}
             className="data-[state=checked]:bg-primary-accent"
           />
-          <Label htmlFor="show-completed" className="text-sm font-medium text-primary-accent">Show completed</Label>
+          <Label htmlFor="show-completed" className="text-sm font-medium text-slate-700">Show completed</Label>
         </div>
 
         {/* Mark All Completed Button */}
@@ -86,7 +86,7 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
           size="sm"
           onClick={onMarkAllCompleted}
           disabled={taskCounts.remaining === 0}
-          className="ml-auto glass-input border-0 font-semibold text-primary-accent hover:bg-primary-accent/10 h-10 transition-all duration-300"
+          className="ml-auto premium-input border-0 font-semibold text-slate-700 hover:bg-slate-50 h-10 rounded-xl"
         >
           <CheckSquare className="h-4 w-4 mr-2" />
           Mark All Done
@@ -96,27 +96,27 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
       {/* Active Filters & Stats */}
       <div className="flex flex-wrap items-center gap-3">
         {filters.search && (
-          <Badge className="bg-primary-accent/10 text-primary-accent hover:bg-primary-accent/20 font-medium px-3 py-1">
+          <Badge className="bg-primary-accent/10 text-primary-accent hover:bg-primary-accent/20 font-medium px-3 py-1 rounded-lg">
             Search: "{filters.search}"
           </Badge>
         )}
         {filters.category !== 'all' && (
-          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 font-medium px-3 py-1">
+          <Badge className="bg-green-50 text-green-700 border-green-200 font-medium px-3 py-1 rounded-lg border">
             {filters.category}
           </Badge>
         )}
         {filters.priority !== 'all' && (
-          <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200 font-medium px-3 py-1">
+          <Badge className="bg-orange-50 text-orange-700 border-orange-200 font-medium px-3 py-1 rounded-lg border">
             {filters.priority} Priority
           </Badge>
         )}
         
-        <div className="ml-auto flex gap-4 text-sm text-primary-accent/80 font-medium">
-          <span>Total: <span className="font-semibold text-primary-accent">{taskCounts.total}</span></span>
+        <div className="ml-auto flex gap-4 text-sm text-slate-600 font-medium">
+          <span>Total: <span className="font-semibold text-slate-800">{taskCounts.total}</span></span>
           <span>•</span>
-          <span>Done: <span className="font-semibold text-green-600">{taskCounts.completed}</span></span>
+          <span>Done: <span className="font-semibold text-accent-green">{taskCounts.completed}</span></span>
           <span>•</span>
-          <span>Remaining: <span className="font-semibold text-orange-600">{taskCounts.remaining}</span></span>
+          <span>Remaining: <span className="font-semibold text-orange-500">{taskCounts.remaining}</span></span>
         </div>
       </div>
     </div>

@@ -1,11 +1,10 @@
 
 import { useState } from "react";
-import { Plus, LogOut, Moon, Sun, BarChart3 } from "lucide-react";
+import { Plus, LogOut, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useEnhancedTasks } from "@/hooks/useEnhancedTasks";
-import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { Task } from "@/types/task";
 import AuthPage from "./Auth";
 import TaskForm from "@/components/TaskForm";
@@ -26,18 +25,17 @@ const Index = () => {
     deleteTask,
     markAllCompleted
   } = useEnhancedTasks(user?.id);
-  const { preferences, updateTheme } = useUserPreferences(user?.id);
   
   const [showMobileForm, setShowMobileForm] = useState(false);
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-soft-lavender via-blue-50 to-primary-accent/10 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto w-16 h-16 gradient-primary rounded-full flex items-center justify-center mb-4 glow-effect floating-animation">
+          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary-accent to-accent-purple rounded-full flex items-center justify-center mb-4 shadow-lg floating-animation">
             <Plus className="h-8 w-8 text-white" />
           </div>
-          <p className="text-primary-accent font-medium">Loading your productivity hub...</p>
+          <p className="text-slate-600 font-medium">Loading your productivity hub...</p>
         </div>
       </div>
     );
@@ -57,6 +55,14 @@ const Index = () => {
     });
   };
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   const taskCounts = {
     total: allTasks.length,
     completed: allTasks.filter(t => t.completed).length,
@@ -72,56 +78,36 @@ const Index = () => {
   }).length;
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-soft-lavender/30 via-blue-50 to-primary-accent/5">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-accent/5 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-soft-lavender/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse animation-delay-2000"></div>
-      </div>
-
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <header className="relative z-10 glass-card border-0 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="glass-card sticky top-0 z-50 border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 gradient-primary rounded-full flex items-center justify-center glow-effect">
+            <div className="w-12 h-12 bg-gradient-to-br from-primary-accent to-accent-purple rounded-xl flex items-center justify-center shadow-lg">
               <Plus className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary-accent to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary-accent to-accent-purple bg-clip-text text-transparent">
                 TaskFlow
               </h1>
-              <p className="text-sm text-gray-600 font-medium">{user.email}</p>
+              <p className="text-sm text-slate-600 font-medium">{user.email}</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => updateTheme(preferences?.theme === 'dark' ? 'light' : 'dark')}
-              className="hover:bg-primary-accent/10 text-primary-accent rounded-full w-10 h-10 p-0"
-            >
-              {preferences?.theme === 'dark' ? 
-                <Sun className="h-5 w-5" /> : 
-                <Moon className="h-5 w-5" />
-              }
-            </Button>
-            
-            <Button 
-              onClick={signOut}
-              variant="outline" 
-              size="sm"
-              className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-300 rounded-full font-medium"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
-          </div>
+          <Button 
+            onClick={handleSignOut}
+            variant="outline" 
+            size="sm"
+            className="premium-button text-white border-0 hover:shadow-lg font-medium rounded-xl px-4 py-2"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 py-8 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
         {/* Task Form - Desktop */}
         <div className="hidden md:block">
           <TaskForm 
@@ -134,16 +120,16 @@ const Index = () => {
 
         {/* Mobile Task Form Modal */}
         {showMobileForm && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 md:hidden">
-            <div className="glass-card rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 md:hidden">
+            <div className="modal-content rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold text-primary-accent">Add New Task</h2>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-semibold text-slate-800">Add New Task</h2>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowMobileForm(false)}
-                    className="rounded-full w-8 h-8 p-0"
+                    className="rounded-full w-8 h-8 p-0 hover:bg-slate-100"
                   >
                     ×
                   </Button>
@@ -174,32 +160,32 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Tasks List */}
           <div className="lg:col-span-2">
-            <Card className="glass-card border-0 shadow-xl hover-lift">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-primary-accent flex items-center justify-between">
+            <Card className="glass-card border-0 shadow-lg hover-lift rounded-2xl">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl font-semibold text-slate-800 flex items-center justify-between">
                   Your Tasks
-                  <span className="text-sm font-normal text-gray-500">
+                  <span className="text-sm font-normal text-slate-500">
                     {tasks.length} of {allTasks.length} tasks
                   </span>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-0">
                 {tasksLoading ? (
                   <div className="text-center py-12">
-                    <div className="mx-auto w-12 h-12 gradient-primary rounded-full flex items-center justify-center mb-4 floating-animation">
+                    <div className="mx-auto w-12 h-12 bg-gradient-to-br from-primary-accent to-accent-purple rounded-xl flex items-center justify-center mb-4 floating-animation shadow-lg">
                       <Plus className="h-6 w-6 text-white" />
                     </div>
-                    <p className="text-primary-accent font-medium">Loading your tasks...</p>
+                    <p className="text-slate-600 font-medium">Loading your tasks...</p>
                   </div>
                 ) : tasks.length === 0 ? (
                   <div className="text-center py-16">
-                    <div className="mx-auto w-20 h-20 bg-gradient-to-br from-soft-lavender to-primary-accent/20 rounded-full flex items-center justify-center mb-6">
-                      <Plus className="h-10 w-10 text-primary-accent" />
+                    <div className="mx-auto w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center mb-6">
+                      <Plus className="h-10 w-10 text-slate-400" />
                     </div>
-                    <p className="text-primary-accent text-xl font-semibold mb-2">
+                    <p className="text-slate-800 text-xl font-semibold mb-2">
                       {allTasks.length === 0 ? "Ready to be productive?" : "No tasks match your filters"}
                     </p>
-                    <p className="text-gray-500 font-medium">
+                    <p className="text-slate-500 font-medium">
                       {allTasks.length === 0 ? "Add your first task to get started!" : "Try adjusting your search or filters"}
                     </p>
                   </div>
@@ -208,7 +194,7 @@ const Index = () => {
                     {tasks.map((task, index) => (
                       <div 
                         key={task.id} 
-                        className="animate-fade-in"
+                        className="fade-in"
                         style={{ animationDelay: `${index * 0.1}s` }}
                       >
                         <TaskItem
@@ -230,50 +216,50 @@ const Index = () => {
           <div className="space-y-6">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 gap-4">
-              <Card className="gradient-primary text-white border-0 shadow-xl hover-lift">
+              <Card className="stat-card rounded-2xl border-0 shadow-lg hover-lift">
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold mb-1">{taskCounts.total}</div>
-                  <div className="text-sm opacity-90 font-medium">Total Tasks</div>
+                  <div className="text-3xl font-bold text-primary-accent mb-1">{taskCounts.total}</div>
+                  <div className="text-sm text-slate-600 font-medium">Total Tasks</div>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0 shadow-xl hover-lift">
+              <Card className="stat-card rounded-2xl border-0 shadow-lg hover-lift">
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold mb-1">{taskCounts.completed}</div>
-                  <div className="text-sm opacity-90 font-medium">Completed</div>
+                  <div className="text-3xl font-bold text-accent-green mb-1">{taskCounts.completed}</div>
+                  <div className="text-sm text-slate-600 font-medium">Completed</div>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-orange-500 to-amber-600 text-white border-0 shadow-xl hover-lift">
+              <Card className="stat-card rounded-2xl border-0 shadow-lg hover-lift">
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold mb-1">{taskCounts.remaining}</div>
-                  <div className="text-sm opacity-90 font-medium">Remaining</div>
+                  <div className="text-3xl font-bold text-orange-500 mb-1">{taskCounts.remaining}</div>
+                  <div className="text-sm text-slate-600 font-medium">Remaining</div>
                 </CardContent>
               </Card>
             </div>
 
             {/* Weekly Progress */}
-            <Card className="glass-card border-0 shadow-xl hover-lift">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold text-primary-accent flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
+            <Card className="glass-card border-0 shadow-lg hover-lift rounded-2xl">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-primary-accent" />
                   Weekly Progress
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 pt-0">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600 mb-1">{completedThisWeek}</div>
-                  <div className="text-sm text-gray-600 font-medium">Tasks completed this week</div>
+                  <div className="text-3xl font-bold text-accent-green mb-1">{completedThisWeek}</div>
+                  <div className="text-sm text-slate-600 font-medium">Tasks completed this week</div>
                 </div>
                 
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm font-medium">
-                    <span className="text-primary-accent">Completion Rate</span>
+                    <span className="text-slate-700">Completion Rate</span>
                     <span className="text-primary-accent">
                       {taskCounts.total > 0 ? Math.round((taskCounts.completed / taskCounts.total) * 100) : 0}%
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                  <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
                     <div 
-                      className="bg-gradient-to-r from-green-500 to-emerald-600 h-3 rounded-full transition-all duration-500 ease-out"
+                      className="bg-gradient-to-r from-accent-green to-accent-teal h-3 rounded-full transition-all duration-500 ease-out"
                       style={{ 
                         width: `${taskCounts.total > 0 ? (taskCounts.completed / taskCounts.total) * 100 : 0}%` 
                       }}
@@ -281,14 +267,14 @@ const Index = () => {
                   </div>
                 </div>
 
-                <div className="pt-2 space-y-2 text-sm text-primary-accent/80 font-medium">
+                <div className="pt-2 space-y-2 text-sm text-slate-600 font-medium">
                   <div className="flex justify-between">
                     <span>High Priority:</span>
-                    <span className="font-semibold">{allTasks.filter(t => t.priority === 'High' && !t.completed).length} remaining</span>
+                    <span className="font-semibold text-slate-800">{allTasks.filter(t => t.priority === 'High' && !t.completed).length} remaining</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Due Today:</span>
-                    <span className="font-semibold">
+                    <span className="font-semibold text-slate-800">
                       {allTasks.filter(t => 
                         t.due_date && 
                         new Date(t.due_date).toDateString() === new Date().toDateString() && 
