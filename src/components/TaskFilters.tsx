@@ -24,59 +24,60 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
   const priorities = ['High', 'Medium', 'Low'];
 
   return (
-    <div className="space-y-4 p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700">
+    <div className="space-y-6 p-6 glass-card border-0 shadow-xl rounded-2xl hover-lift">
       {/* Search Bar */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-accent/60 h-5 w-5" />
         <Input
-          placeholder="Search tasks..."
+          placeholder="Search your tasks..."
           value={filters.search}
           onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
-          className="pl-10 bg-white dark:bg-gray-900"
+          className="pl-12 glass-input border-0 h-14 text-primary-accent placeholder:text-gray-500 focus:ring-2 focus:ring-primary-accent/30 transition-all duration-300 text-lg"
         />
       </div>
 
       {/* Filters Row */}
-      <div className="flex flex-wrap gap-3 items-center">
-        <div className="flex items-center space-x-2">
-          <Filter className="h-4 w-4 text-gray-500" />
-          <Label className="text-sm font-medium">Filters:</Label>
+      <div className="flex flex-wrap gap-4 items-center">
+        <div className="flex items-center space-x-3">
+          <Filter className="h-5 w-5 text-primary-accent" />
+          <Label className="text-sm font-semibold text-primary-accent">Filters:</Label>
         </div>
 
         {/* Category Filter */}
         <Select value={filters.category} onValueChange={(value) => onFiltersChange({ ...filters, category: value })}>
-          <SelectTrigger className="w-[120px] bg-white dark:bg-gray-900">
+          <SelectTrigger className="w-[140px] glass-input border-0 h-10 focus:ring-2 focus:ring-primary-accent/30">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
+          <SelectContent className="glass-card border-0">
+            <SelectItem value="all" className="hover:bg-primary-accent/10">All Categories</SelectItem>
             {categories.map(category => (
-              <SelectItem key={category} value={category}>{category}</SelectItem>
+              <SelectItem key={category} value={category} className="hover:bg-primary-accent/10">{category}</SelectItem>
             ))}
           </SelectContent>
         </Select>
 
         {/* Priority Filter */}
         <Select value={filters.priority} onValueChange={(value) => onFiltersChange({ ...filters, priority: value })}>
-          <SelectTrigger className="w-[110px] bg-white dark:bg-gray-900">
+          <SelectTrigger className="w-[130px] glass-input border-0 h-10 focus:ring-2 focus:ring-primary-accent/30">
             <SelectValue placeholder="Priority" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Priorities</SelectItem>
+          <SelectContent className="glass-card border-0">
+            <SelectItem value="all" className="hover:bg-primary-accent/10">All Priorities</SelectItem>
             {priorities.map(priority => (
-              <SelectItem key={priority} value={priority}>{priority}</SelectItem>
+              <SelectItem key={priority} value={priority} className="hover:bg-primary-accent/10">{priority}</SelectItem>
             ))}
           </SelectContent>
         </Select>
 
         {/* Show Completed Toggle */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3 p-3 glass-input rounded-lg">
           <Switch
             id="show-completed"
             checked={filters.showCompleted}
             onCheckedChange={(checked) => onFiltersChange({ ...filters, showCompleted: checked })}
+            className="data-[state=checked]:bg-primary-accent"
           />
-          <Label htmlFor="show-completed" className="text-sm">Show completed</Label>
+          <Label htmlFor="show-completed" className="text-sm font-medium text-primary-accent">Show completed</Label>
         </div>
 
         {/* Mark All Completed Button */}
@@ -85,37 +86,37 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
           size="sm"
           onClick={onMarkAllCompleted}
           disabled={taskCounts.remaining === 0}
-          className="ml-auto"
+          className="ml-auto glass-input border-0 font-semibold text-primary-accent hover:bg-primary-accent/10 h-10 transition-all duration-300"
         >
-          <CheckSquare className="h-4 w-4 mr-1" />
+          <CheckSquare className="h-4 w-4 mr-2" />
           Mark All Done
         </Button>
       </div>
 
       {/* Active Filters & Stats */}
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-3">
         {filters.search && (
-          <Badge variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+          <Badge className="bg-primary-accent/10 text-primary-accent hover:bg-primary-accent/20 font-medium px-3 py-1">
             Search: "{filters.search}"
           </Badge>
         )}
         {filters.category !== 'all' && (
-          <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 font-medium px-3 py-1">
             {filters.category}
           </Badge>
         )}
         {filters.priority !== 'all' && (
-          <Badge variant="secondary" className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
+          <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200 font-medium px-3 py-1">
             {filters.priority} Priority
           </Badge>
         )}
         
-        <div className="ml-auto flex gap-2 text-xs text-gray-600 dark:text-gray-400">
-          <span>Total: {taskCounts.total}</span>
+        <div className="ml-auto flex gap-4 text-sm text-primary-accent/80 font-medium">
+          <span>Total: <span className="font-semibold text-primary-accent">{taskCounts.total}</span></span>
           <span>•</span>
-          <span>Done: {taskCounts.completed}</span>
+          <span>Done: <span className="font-semibold text-green-600">{taskCounts.completed}</span></span>
           <span>•</span>
-          <span>Remaining: {taskCounts.remaining}</span>
+          <span>Remaining: <span className="font-semibold text-orange-600">{taskCounts.remaining}</span></span>
         </div>
       </div>
     </div>

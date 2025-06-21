@@ -11,6 +11,7 @@ import AuthPage from "./Auth";
 import TaskForm from "@/components/TaskForm";
 import TaskFilters from "@/components/TaskFilters";
 import TaskItem from "@/components/TaskItem";
+import TaskEditModal from "@/components/TaskEditModal";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -29,15 +30,16 @@ const Index = () => {
   const { preferences, updateTheme } = useUserPreferences(user?.id);
   
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [showMobileForm, setShowMobileForm] = useState(false);
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-soft-lavender via-blue-50 to-primary-accent/10 flex items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
-            <Plus className="h-8 w-8 text-white animate-spin" />
+          <div className="mx-auto w-16 h-16 gradient-primary rounded-full flex items-center justify-center mb-4 glow-effect floating-animation">
+            <Plus className="h-8 w-8 text-white" />
           </div>
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+          <p className="text-primary-accent font-medium">Loading your productivity hub...</p>
         </div>
       </div>
     );
@@ -72,44 +74,48 @@ const Index = () => {
   }).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-soft-lavender/30 via-blue-50 to-primary-accent/5">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-accent/5 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-soft-lavender/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse animation-delay-2000"></div>
+      </div>
+
       {/* Header */}
-      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="relative z-10 glass-card border-0 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <Plus className="h-5 w-5 text-white" />
+            <div className="w-12 h-12 gradient-primary rounded-full flex items-center justify-center glow-effect">
+              <Plus className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary-accent to-blue-600 bg-clip-text text-transparent">
                 TaskFlow
               </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+              <p className="text-sm text-gray-600 font-medium">{user.email}</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
-            {/* Theme Toggle */}
+          <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => updateTheme(preferences?.theme === 'dark' ? 'light' : 'dark')}
-              className="hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="hover:bg-primary-accent/10 text-primary-accent rounded-full w-10 h-10 p-0"
             >
               {preferences?.theme === 'dark' ? 
-                <Sun className="h-4 w-4" /> : 
-                <Moon className="h-4 w-4" />
+                <Sun className="h-5 w-5" /> : 
+                <Moon className="h-5 w-5" />
               }
             </Button>
             
-            {/* Logout */}
             <Button 
               onClick={signOut}
               variant="outline" 
               size="sm"
-              className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
+              className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-300 rounded-full font-medium"
             >
-              <LogOut className="h-4 w-4 mr-1" />
+              <LogOut className="h-4 w-4 mr-2" />
               Logout
             </Button>
           </div>
@@ -117,14 +123,46 @@ const Index = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
-        {/* Task Form */}
-        <TaskForm 
-          onAddTask={addTask}
-          editingTask={editingTask}
-          onUpdateTask={updateTask}
-          onCancelEdit={() => setEditingTask(null)}
-        />
+      <main className="relative z-10 max-w-7xl mx-auto px-4 py-8 space-y-8">
+        {/* Task Form - Desktop */}
+        <div className="hidden md:block">
+          <TaskForm 
+            onAddTask={addTask}
+            editingTask={editingTask}
+            onUpdateTask={updateTask}
+            onCancelEdit={() => setEditingTask(null)}
+          />
+        </div>
+
+        {/* Mobile Task Form Modal */}
+        {showMobileForm && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 md:hidden">
+            <div className="glass-card rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-primary-accent">Add New Task</h2>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowMobileForm(false)}
+                    className="rounded-full w-8 h-8 p-0"
+                  >
+                    ×
+                  </Button>
+                </div>
+                <TaskForm 
+                  onAddTask={(task) => {
+                    addTask(task);
+                    setShowMobileForm(false);
+                  }}
+                  editingTask={null}
+                  onUpdateTask={updateTask}
+                  onCancelEdit={() => setShowMobileForm(false)}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Filters */}
         <TaskFilters
@@ -138,46 +176,52 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Tasks List */}
           <div className="lg:col-span-2">
-            <Card className="shadow-lg border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+            <Card className="glass-card border-0 shadow-xl hover-lift">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-200 flex items-center justify-between">
+                <CardTitle className="text-xl font-semibold text-primary-accent flex items-center justify-between">
                   Your Tasks
-                  <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-                    Showing {tasks.length} of {allTasks.length} tasks
+                  <span className="text-sm font-normal text-gray-500">
+                    {tasks.length} of {allTasks.length} tasks
                   </span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {tasksLoading ? (
-                  <div className="text-center py-8">
-                    <div className="mx-auto w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mb-2">
-                      <Plus className="h-4 w-4 text-white animate-spin" />
+                  <div className="text-center py-12">
+                    <div className="mx-auto w-12 h-12 gradient-primary rounded-full flex items-center justify-center mb-4 floating-animation">
+                      <Plus className="h-6 w-6 text-white" />
                     </div>
-                    <p className="text-gray-500 dark:text-gray-400">Loading tasks...</p>
+                    <p className="text-primary-accent font-medium">Loading your tasks...</p>
                   </div>
                 ) : tasks.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                      <Plus className="h-8 w-8 text-gray-400" />
+                  <div className="text-center py-16">
+                    <div className="mx-auto w-20 h-20 bg-gradient-to-br from-soft-lavender to-primary-accent/20 rounded-full flex items-center justify-center mb-6">
+                      <Plus className="h-10 w-10 text-primary-accent" />
                     </div>
-                    <p className="text-gray-500 dark:text-gray-400 text-lg mb-2">
-                      {allTasks.length === 0 ? "No tasks yet" : "No tasks match your filters"}
+                    <p className="text-primary-accent text-xl font-semibold mb-2">
+                      {allTasks.length === 0 ? "Ready to be productive?" : "No tasks match your filters"}
                     </p>
-                    <p className="text-gray-400 dark:text-gray-500 text-sm">
-                      {allTasks.length === 0 ? "Add your first task above to get started!" : "Try adjusting your search or filters"}
+                    <p className="text-gray-500 font-medium">
+                      {allTasks.length === 0 ? "Add your first task to get started!" : "Try adjusting your search or filters"}
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    {tasks.map((task) => (
-                      <TaskItem
-                        key={task.id}
-                        task={task}
-                        onToggle={toggleTask}
-                        onDelete={deleteTask}
-                        onAddSubtask={handleAddSubtask}
-                        onUpdateTask={updateTask}
-                      />
+                  <div className="space-y-4">
+                    {tasks.map((task, index) => (
+                      <div 
+                        key={task.id} 
+                        className="animate-fade-in"
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                      >
+                        <TaskItem
+                          task={task}
+                          onToggle={toggleTask}
+                          onDelete={deleteTask}
+                          onAddSubtask={handleAddSubtask}
+                          onUpdateTask={updateTask}
+                          onEdit={setEditingTask}
+                        />
+                      </div>
                     ))}
                   </div>
                 )}
@@ -189,50 +233,50 @@ const Index = () => {
           <div className="space-y-6">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 gap-4">
-              <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0">
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold">{taskCounts.total}</div>
-                  <div className="text-sm opacity-90">Total Tasks</div>
+              <Card className="gradient-primary text-white border-0 shadow-xl hover-lift">
+                <CardContent className="p-6 text-center">
+                  <div className="text-3xl font-bold mb-1">{taskCounts.total}</div>
+                  <div className="text-sm opacity-90 font-medium">Total Tasks</div>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0">
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold">{taskCounts.completed}</div>
-                  <div className="text-sm opacity-90">Completed</div>
+              <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0 shadow-xl hover-lift">
+                <CardContent className="p-6 text-center">
+                  <div className="text-3xl font-bold mb-1">{taskCounts.completed}</div>
+                  <div className="text-sm opacity-90 font-medium">Completed</div>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0">
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold">{taskCounts.remaining}</div>
-                  <div className="text-sm opacity-90">Remaining</div>
+              <Card className="bg-gradient-to-br from-orange-500 to-amber-600 text-white border-0 shadow-xl hover-lift">
+                <CardContent className="p-6 text-center">
+                  <div className="text-3xl font-bold mb-1">{taskCounts.remaining}</div>
+                  <div className="text-sm opacity-90 font-medium">Remaining</div>
                 </CardContent>
               </Card>
             </div>
 
             {/* Weekly Progress */}
-            <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+            <Card className="glass-card border-0 shadow-xl hover-lift">
               <CardHeader>
-                <CardTitle className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4" />
+                <CardTitle className="text-lg font-semibold text-primary-accent flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
                   Weekly Progress
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{completedThisWeek}</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Tasks completed this week</div>
+                  <div className="text-3xl font-bold text-green-600 mb-1">{completedThisWeek}</div>
+                  <div className="text-sm text-gray-600 font-medium">Tasks completed this week</div>
                 </div>
                 
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400">Completion Rate</span>
-                    <span className="font-medium">
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm font-medium">
+                    <span className="text-primary-accent">Completion Rate</span>
+                    <span className="text-primary-accent">
                       {taskCounts.total > 0 ? Math.round((taskCounts.completed / taskCounts.total) * 100) : 0}%
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                     <div 
-                      className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300"
+                      className="bg-gradient-to-r from-green-500 to-emerald-600 h-3 rounded-full transition-all duration-500 ease-out"
                       style={{ 
                         width: `${taskCounts.total > 0 ? (taskCounts.completed / taskCounts.total) * 100 : 0}%` 
                       }}
@@ -240,14 +284,14 @@ const Index = () => {
                   </div>
                 </div>
 
-                <div className="pt-2 space-y-1 text-xs text-gray-600 dark:text-gray-400">
+                <div className="pt-2 space-y-2 text-sm text-primary-accent/80 font-medium">
                   <div className="flex justify-between">
                     <span>High Priority:</span>
-                    <span>{allTasks.filter(t => t.priority === 'High' && !t.completed).length} remaining</span>
+                    <span className="font-semibold">{allTasks.filter(t => t.priority === 'High' && !t.completed).length} remaining</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Due Today:</span>
-                    <span>
+                    <span className="font-semibold">
                       {allTasks.filter(t => 
                         t.due_date && 
                         new Date(t.due_date).toDateString() === new Date().toDateString() && 
@@ -261,6 +305,28 @@ const Index = () => {
           </div>
         </div>
       </main>
+
+      {/* Floating Action Button - Mobile */}
+      <button
+        onClick={() => setShowMobileForm(true)}
+        className="fab-button flex items-center justify-center md:hidden"
+        aria-label="Add new task"
+      >
+        <Plus className="h-6 w-6 text-white" />
+      </button>
+
+      {/* Edit Task Modal */}
+      {editingTask && (
+        <TaskEditModal
+          task={editingTask}
+          isOpen={!!editingTask}
+          onClose={() => setEditingTask(null)}
+          onSave={(updates) => {
+            updateTask(editingTask.id, updates);
+            setEditingTask(null);
+          }}
+        />
+      )}
     </div>
   );
 };
