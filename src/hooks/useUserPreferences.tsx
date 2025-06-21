@@ -31,9 +31,15 @@ export const useUserPreferences = (userId: string | undefined) => {
           .single();
 
         if (createError) throw createError;
-        setPreferences(newPrefs);
+        setPreferences({
+          ...newPrefs,
+          theme: (newPrefs.theme || 'light') as 'light' | 'dark'
+        });
       } else {
-        setPreferences(data);
+        setPreferences({
+          ...data,
+          theme: (data.theme || 'light') as 'light' | 'dark'
+        });
       }
     } catch (error) {
       console.error("Error fetching preferences:", error);

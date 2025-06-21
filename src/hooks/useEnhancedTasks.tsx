@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -28,13 +27,30 @@ export const useEnhancedTasks = (userId: string | undefined) => {
 
       if (error) throw error;
       
-      // Organize tasks with subtasks
+      // Organize tasks with subtasks and ensure proper typing
       const mainTasks = data?.filter(task => !task.is_subtask) || [];
       const subtasks = data?.filter(task => task.is_subtask) || [];
       
       const tasksWithSubtasks = mainTasks.map(task => ({
         ...task,
-        subtasks: subtasks.filter(subtask => subtask.parent_task_id === task.id)
+        // Type cast database values to match our interfaces
+        priority: (task.priority || 'Medium') as 'High' | 'Medium' | 'Low',
+        recurring_type: (task.recurring_type || 'none') as 'none' | 'daily' | 'weekly' | 'monthly',
+        category: task.category || 'Personal',
+        reminder_enabled: task.reminder_enabled || false,
+        is_subtask: task.is_subtask || false,
+        order_index: task.order_index || 0,
+        subtasks: subtasks
+          .filter(subtask => subtask.parent_task_id === task.id)
+          .map(subtask => ({
+            ...subtask,
+            priority: (subtask.priority || 'Medium') as 'High' | 'Medium' | 'Low',
+            recurring_type: (subtask.recurring_type || 'none') as 'none' | 'daily' | 'weekly' | 'monthly',
+            category: subtask.category || 'Personal',
+            reminder_enabled: subtask.reminder_enabled || false,
+            is_subtask: subtask.is_subtask || false,
+            order_index: subtask.order_index || 0,
+          }))
       }));
       
       setTasks(tasksWithSubtasks);

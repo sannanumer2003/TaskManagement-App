@@ -23,20 +23,20 @@ interface TaskFormProps {
 const TaskForm = ({ onAddTask, editingTask, onUpdateTask, onCancelEdit }: TaskFormProps) => {
   const [taskText, setTaskText] = useState(editingTask?.text || "");
   const [category, setCategory] = useState(editingTask?.category || "Personal");
-  const [priority, setPriority] = useState(editingTask?.priority || "Medium");
+  const [priority, setPriority] = useState<'High' | 'Medium' | 'Low'>(editingTask?.priority || "Medium");
   const [dueDate, setDueDate] = useState<Date | undefined>(
     editingTask?.due_date ? new Date(editingTask.due_date) : undefined
   );
   const [reminderEnabled, setReminderEnabled] = useState(editingTask?.reminder_enabled || false);
-  const [recurringType, setRecurringType] = useState(editingTask?.recurring_type || "none");
+  const [recurringType, setRecurringType] = useState<'none' | 'daily' | 'weekly' | 'monthly'>(editingTask?.recurring_type || "none");
 
   const categories = ['Personal', 'Work', 'Urgent', 'Health', 'Finance', 'Learning'];
-  const priorities = ['High', 'Medium', 'Low'];
+  const priorities = ['High', 'Medium', 'Low'] as const;
   const recurringOptions = [
-    { value: 'none', label: 'No Repeat' },
-    { value: 'daily', label: 'Daily' },
-    { value: 'weekly', label: 'Weekly' },
-    { value: 'monthly', label: 'Monthly' },
+    { value: 'none' as const, label: 'No Repeat' },
+    { value: 'daily' as const, label: 'Daily' },
+    { value: 'weekly' as const, label: 'Weekly' },
+    { value: 'monthly' as const, label: 'Monthly' },
   ];
 
   const handleSubmit = () => {
@@ -45,10 +45,10 @@ const TaskForm = ({ onAddTask, editingTask, onUpdateTask, onCancelEdit }: TaskFo
     const taskData: Partial<Task> = {
       text: taskText.trim(),
       category,
-      priority: priority as 'High' | 'Medium' | 'Low',
+      priority,
       due_date: dueDate?.toISOString(),
       reminder_enabled: reminderEnabled,
-      recurring_type: recurringType as 'none' | 'daily' | 'weekly' | 'monthly',
+      recurring_type: recurringType,
     };
 
     if (editingTask && onUpdateTask) {
@@ -124,7 +124,7 @@ const TaskForm = ({ onAddTask, editingTask, onUpdateTask, onCancelEdit }: TaskFo
               <Flag className="h-3 w-3" />
               Priority
             </Label>
-            <Select value={priority} onValueChange={setPriority}>
+            <Select value={priority} onValueChange={(value) => setPriority(value as 'High' | 'Medium' | 'Low')}>
               <SelectTrigger className="bg-white dark:bg-gray-900">
                 <SelectValue />
               </SelectTrigger>
@@ -181,7 +181,7 @@ const TaskForm = ({ onAddTask, editingTask, onUpdateTask, onCancelEdit }: TaskFo
 
           <div className="space-y-2">
             <Label className="text-sm font-medium">Recurring</Label>
-            <Select value={recurringType} onValueChange={setRecurringType}>
+            <Select value={recurringType} onValueChange={(value) => setRecurringType(value as 'none' | 'daily' | 'weekly' | 'monthly')}>
               <SelectTrigger className="bg-white dark:bg-gray-900">
                 <SelectValue />
               </SelectTrigger>
