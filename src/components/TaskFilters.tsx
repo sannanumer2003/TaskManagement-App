@@ -32,7 +32,7 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
           placeholder="Search your tasks..."
           value={filters.search}
           onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
-          className="pl-12 border border-gray-200 h-14 text-primary-accent placeholder:text-gray-500 focus:ring-2 focus:ring-primary-accent/30 transition-all duration-300 text-lg"
+          className="pl-12 border-gray-300 h-14 text-primary-accent placeholder:text-gray-500 focus:border-primary-accent focus:ring-primary-accent/30 text-lg"
         />
       </div>
 
@@ -45,7 +45,7 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
 
         {/* Category Filter */}
         <Select value={filters.category} onValueChange={(value) => onFiltersChange({ ...filters, category: value })}>
-          <SelectTrigger className="w-[140px] border border-gray-200 h-10 focus:ring-2 focus:ring-primary-accent/30">
+          <SelectTrigger className="w-[140px] glass-input border-0 h-10 focus:ring-2 focus:ring-primary-accent/30 text-primary-accent">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent className="bg-white border border-gray-200">
@@ -58,7 +58,7 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
 
         {/* Priority Filter */}
         <Select value={filters.priority} onValueChange={(value) => onFiltersChange({ ...filters, priority: value })}>
-          <SelectTrigger className="w-[130px] border border-gray-200 h-10 focus:ring-2 focus:ring-primary-accent/30">
+          <SelectTrigger className="w-[130px] glass-input border-0 h-10 focus:ring-2 focus:ring-primary-accent/30 text-primary-accent">
             <SelectValue placeholder="Priority" />
           </SelectTrigger>
           <SelectContent className="bg-white border border-gray-200">
@@ -70,7 +70,7 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
         </Select>
 
         {/* Show Completed Toggle */}
-        <div className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
+        <div className="flex items-center space-x-3 p-3 glass-input border-0 rounded-lg">
           <Switch
             id="show-completed"
             checked={filters.showCompleted}
@@ -80,13 +80,13 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
           <Label htmlFor="show-completed" className="text-sm font-medium text-primary-accent">Show completed</Label>
         </div>
 
-        {/* Mark All Completed Button - Left aligned */}
+        {/* Mark All Completed Button */}
         <Button
           variant="outline"
           size="sm"
           onClick={onMarkAllCompleted}
           disabled={taskCounts.remaining === 0}
-          className="border border-gray-200 font-semibold text-primary-accent hover:bg-primary-accent/10 h-10 transition-all duration-300"
+          className="glass-input border-0 font-semibold text-primary-accent hover:bg-primary-accent/10 h-10"
         >
           <CheckSquare className="h-4 w-4 mr-2" />
           Mark All Done

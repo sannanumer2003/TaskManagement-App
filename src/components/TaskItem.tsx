@@ -64,7 +64,7 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
     <>
       <div
         className={cn(
-          "bg-white rounded-lg border border-gray-200 p-4 space-y-3 transition-all duration-200",
+          "bg-white rounded-lg border border-gray-200 p-4 space-y-3",
           task.completed && "opacity-75",
           isDueSoon && !task.completed && "border-l-4 border-l-red-500"
         )}
@@ -75,17 +75,15 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
             type="checkbox"
             checked={task.completed}
             onChange={() => onToggle(task.id, !task.completed)}
-            className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 mt-0.5 cursor-pointer"
+            className="w-5 h-5 text-primary-accent rounded focus:ring-primary-accent/30 mt-0.5 cursor-pointer"
           />
           
           <div className="flex-1 space-y-3">
             {/* Task Text */}
             <div className="flex items-start justify-between gap-2">
               <span className={cn(
-                "text-sm font-medium flex-1",
-                task.completed 
-                  ? 'text-gray-500 line-through' 
-                  : 'text-gray-800'
+                "text-sm font-medium flex-1 text-primary-accent",
+                task.completed && 'line-through opacity-60'
               )}>
                 {task.text}
               </span>
@@ -93,8 +91,8 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
 
             {/* Mobile: Badges at bottom + Action buttons on right */}
             <div className="flex items-end justify-between">
-              {/* Badges */}
-              <div className="flex flex-wrap gap-1 items-center flex-1">
+              {/* Badges - Mobile: Stack vertically */}
+              <div className="flex flex-col gap-1 items-start flex-1 md:flex-row md:flex-wrap md:items-center">
                 <Badge variant="outline" className={getCategoryColor(task.category)}>
                   <Tag className="h-3 w-3 mr-1" />
                   {task.category}
@@ -136,7 +134,7 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowSubtaskForm(!showSubtaskForm)}
-                  className="h-8 w-8 p-0 text-gray-400 hover:text-blue-500"
+                  className="h-8 w-8 p-0 text-gray-400 hover:text-primary-accent hover:bg-primary-accent/10"
                   title="Add subtask"
                 >
                   <Plus className="h-4 w-4" />
@@ -145,7 +143,7 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowEditModal(true)}
-                  className="h-8 w-8 p-0 text-gray-400 hover:text-blue-500"
+                  className="h-8 w-8 p-0 text-gray-400 hover:text-primary-accent hover:bg-primary-accent/10"
                   title="Edit task"
                 >
                   <Edit className="h-4 w-4" />
@@ -154,7 +152,7 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
                   variant="ghost"
                   size="sm"
                   onClick={() => onDelete(task.id)}
-                  className="h-8 w-8 p-0 text-gray-400 hover:text-red-500"
+                  className="h-8 w-8 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
                   title="Delete task"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -169,7 +167,7 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowSubtasks(!showSubtasks)}
-                  className="h-6 px-2 text-xs"
+                  className="h-6 px-2 text-xs text-primary-accent hover:bg-primary-accent/10"
                 >
                   {showSubtasks ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
                   {task.subtasks.length} subtask{task.subtasks.length !== 1 ? 's' : ''}
@@ -183,12 +181,11 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
                           type="checkbox"
                           checked={subtask.completed}
                           onChange={() => onToggle(subtask.id, !subtask.completed)}
-                          className="w-4 h-4 text-blue-600 rounded"
+                          className="w-4 h-4 text-primary-accent rounded"
                         />
                         <span className={cn(
-                          subtask.completed 
-                            ? 'text-gray-500 line-through' 
-                            : 'text-gray-700'
+                          "text-primary-accent",
+                          subtask.completed && 'line-through opacity-60'
                         )}>
                           {subtask.text}
                         </span>
@@ -214,17 +211,21 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
                   value={newSubtaskText}
                   onChange={(e) => setNewSubtaskText(e.target.value)}
                   placeholder="Add a subtask..."
-                  className="text-sm h-8"
+                  className="text-sm h-8 border-gray-300 focus:border-primary-accent focus:ring-primary-accent/30"
                   onKeyPress={(e) => e.key === 'Enter' && handleAddSubtask()}
                 />
-                <Button size="sm" onClick={handleAddSubtask} className="h-8">
+                <Button 
+                  size="sm" 
+                  onClick={handleAddSubtask} 
+                  className="h-8 bg-primary-accent hover:bg-primary-accent/90 text-white"
+                >
                   Add
                 </Button>
                 <Button 
                   variant="ghost" 
                   size="sm" 
                   onClick={() => setShowSubtaskForm(false)}
-                  className="h-8"
+                  className="h-8 text-primary-accent hover:bg-primary-accent/10"
                 >
                   Cancel
                 </Button>

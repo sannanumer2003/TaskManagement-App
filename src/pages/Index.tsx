@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Plus, LogOut, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -101,10 +100,10 @@ const Index = () => {
               onClick={signOut}
               variant="outline" 
               size="sm"
-              className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 rounded-full font-medium"
+              className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 rounded-full font-medium shrink-0"
             >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
+              <LogOut className="h-4 w-4 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">Logout</span>
             </Button>
           </div>
         </div>
