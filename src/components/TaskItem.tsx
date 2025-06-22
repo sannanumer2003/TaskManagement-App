@@ -57,6 +57,10 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
     setShowEditModal(false);
   };
 
+  const handleToggle = () => {
+    onToggle(task.id, !task.completed);
+  };
+
   const isDueSoon = task.due_date && !task.completed && 
     (isToday(new Date(task.due_date)) || isPast(new Date(task.due_date)));
 
@@ -74,7 +78,7 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
           <input
             type="checkbox"
             checked={task.completed}
-            onChange={() => onToggle(task.id, !task.completed)}
+            onChange={handleToggle}
             className="w-5 h-5 text-primary-accent rounded focus:ring-primary-accent/30 mt-0.5 cursor-pointer"
           />
           
