@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Calendar, Bell, Tag, Flag, Edit, Trash2, Plus, ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,16 @@ import { cn } from "@/lib/utils";
 import { format, isToday, isPast } from "date-fns";
 import { Task } from "@/types/task";
 import TaskEditModal from "./TaskEditModal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface TaskItemProps {
   task: Task;
@@ -22,6 +31,7 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
   const [newSubtaskText, setNewSubtaskText] = useState("");
   const [showSubtaskForm, setShowSubtaskForm] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -57,8 +67,17 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
     setShowEditModal(false);
   };
 
-  const handleToggle = () => {
-    onToggle(task.id, !task.completed);
+  const handleCheckboxClick = () => {
+    if (!task.completed) {
+      setShowConfirmDialog(true);
+    } else {
+      onToggle(task.id, false);
+    }
+  };
+
+  const handleConfirmComplete = () => {
+    onToggle(task.id, true);
+    setShowConfirmDialog(false);
   };
 
   const isDueSoon = task.due_date && !task.completed && 
@@ -78,7 +97,7 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
           <input
             type="checkbox"
             checked={task.completed}
-            onChange={handleToggle}
+            onChange={handleCheckboxClick}
             className="w-5 h-5 text-primary-accent rounded focus:ring-primary-accent/30 mt-0.5 cursor-pointer"
           />
           
@@ -238,6 +257,29 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
           </div>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent className="bg-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-primary-accent">Mark Task as Completed?</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-600">
+              Are you sure you want to mark this task as completed? This action will move it to your completed tasks.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="text-primary-accent border-gray-300 hover:bg-gray-50">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleConfirmComplete}
+              className="bg-primary-accent hover:bg-primary-accent/90 text-white"
+            >
+              Mark Complete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Edit Modal */}
       <TaskEditModal
