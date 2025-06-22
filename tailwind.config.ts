@@ -22,10 +22,7 @@ export default {
 				sans: ['Poppins', 'ui-sans-serif', 'system-ui'],
 			},
 			colors: {
-				'primary-accent': '#6366f1',
-				'accent-teal': '#14b8a6',
-				'accent-purple': '#8b5cf6',
-				'accent-green': '#10b981',
+				'primary-accent': '#0e1e54',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',

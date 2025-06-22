@@ -26,7 +26,7 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'High': return 'bg-red-50 text-red-700 border-red-200';
-      case 'Medium': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+      case 'Medium': return 'bg-blue-50 text-blue-700 border-blue-200';
       case 'Low': return 'bg-green-50 text-green-700 border-green-200';
       default: return 'bg-slate-50 text-slate-700 border-slate-200';
     }
@@ -35,11 +35,11 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
   const getCategoryColor = (category: string) => {
     const colors = {
       'Work': 'bg-blue-50 text-blue-700 border-blue-200',
-      'Personal': 'bg-purple-50 text-purple-700 border-purple-200',
+      'Personal': 'bg-slate-50 text-slate-700 border-slate-200',
       'Urgent': 'bg-red-50 text-red-700 border-red-200',
       'Health': 'bg-green-50 text-green-700 border-green-200',
-      'Finance': 'bg-orange-50 text-orange-700 border-orange-200',
-      'Learning': 'bg-indigo-50 text-indigo-700 border-indigo-200',
+      'Finance': 'bg-slate-50 text-slate-700 border-slate-200',
+      'Learning': 'bg-slate-50 text-slate-700 border-slate-200',
     };
     return colors[category as keyof typeof colors] || 'bg-slate-50 text-slate-700 border-slate-200';
   };
@@ -79,30 +79,28 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
           />
           
           <div className="flex-1 space-y-3 min-w-0">
-            {/* Task Text and Priority */}
+            {/* Task Text */}
             <div className="flex items-start justify-between gap-3">
               <span className={cn(
-                "text-sm sm:text-base font-medium flex-1 break-words",
+                "text-sm sm:text-base font-medium flex-1 break-words pr-2",
                 task.completed 
                   ? 'text-slate-500 line-through' 
                   : 'text-slate-800'
               )}>
                 {task.text}
               </span>
-              
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <Badge variant="secondary" className={cn("text-xs px-2 py-1 rounded-lg border", getPriorityColor(task.priority))}>
-                  <Flag className="h-3 w-3 mr-1" />
-                  {task.priority}
-                </Badge>
-              </div>
             </div>
 
-            {/* Badges Row */}
+            {/* Badges Row - Mobile friendly layout */}
             <div className="flex flex-wrap gap-2 items-center">
               <Badge variant="outline" className={cn("text-xs px-2 py-1 rounded-lg border", getCategoryColor(task.category))}>
                 <Tag className="h-3 w-3 mr-1" />
                 {task.category}
+              </Badge>
+              
+              <Badge variant="secondary" className={cn("text-xs px-2 py-1 rounded-lg border", getPriorityColor(task.priority))}>
+                <Flag className="h-3 w-3 mr-1" />
+                {task.priority}
               </Badge>
               
               {task.due_date && (
@@ -117,14 +115,14 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
               )}
               
               {task.reminder_enabled && (
-                <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs px-2 py-1 rounded-lg border">
+                <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200 text-xs px-2 py-1 rounded-lg border">
                   <Bell className="h-3 w-3 mr-1" />
                   Reminder
                 </Badge>
               )}
               
               {task.recurring_type !== 'none' && (
-                <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 text-xs px-2 py-1 rounded-lg border">
+                <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200 text-xs px-2 py-1 rounded-lg border">
                   {task.recurring_type}
                 </Badge>
               )}

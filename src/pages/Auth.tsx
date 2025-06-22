@@ -104,20 +104,20 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Subtle Background Elements */}
       <div className="absolute top-20 left-20 w-72 h-72 bg-primary-accent/5 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse"></div>
-      <div className="absolute top-40 right-20 w-72 h-72 bg-accent-purple/5 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse" style={{ animationDelay: '2s' }}></div>
-      <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-accent-teal/5 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse" style={{ animationDelay: '4s' }}></div>
+      <div className="absolute top-40 right-20 w-72 h-72 bg-slate-300/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-slate-300/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse" style={{ animationDelay: '4s' }}></div>
       
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-md">
           {/* Logo Section */}
           <div className="text-center mb-8 floating-animation">
-            <div className="mx-auto w-20 h-20 bg-gradient-to-br from-primary-accent to-accent-purple rounded-2xl flex items-center justify-center shadow-lg mb-4">
+            <div className="mx-auto w-20 h-20 bg-primary-accent rounded-2xl flex items-center justify-center shadow-lg mb-4">
               <Plus className="h-10 w-10 text-white" />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-accent to-accent-purple bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold text-primary-accent">
               TaskFlow
             </h1>
             <p className="text-slate-600 mt-2 font-medium">
@@ -234,7 +234,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                     setPassword("");
                     setConfirmPassword("");
                   }}
-                  className="text-primary-accent hover:text-accent-purple font-medium"
+                  className="text-primary-accent hover:text-slate-700 font-medium"
                 >
                   {isLogin
                     ? "Don't have an account? Sign up"

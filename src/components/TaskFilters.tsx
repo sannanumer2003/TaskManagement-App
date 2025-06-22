@@ -101,12 +101,12 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
           </Badge>
         )}
         {filters.category !== 'all' && (
-          <Badge className="bg-green-50 text-green-700 border-green-200 font-medium px-3 py-1 rounded-lg border">
+          <Badge className="bg-slate-50 text-slate-700 border-slate-200 font-medium px-3 py-1 rounded-lg border">
             {filters.category}
           </Badge>
         )}
         {filters.priority !== 'all' && (
-          <Badge className="bg-orange-50 text-orange-700 border-orange-200 font-medium px-3 py-1 rounded-lg border">
+          <Badge className="bg-slate-50 text-slate-700 border-slate-200 font-medium px-3 py-1 rounded-lg border">
             {filters.priority} Priority
           </Badge>
         )}
@@ -114,9 +114,9 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
         <div className="ml-auto flex gap-4 text-sm text-slate-600 font-medium">
           <span>Total: <span className="font-semibold text-slate-800">{taskCounts.total}</span></span>
           <span>•</span>
-          <span>Done: <span className="font-semibold text-accent-green">{taskCounts.completed}</span></span>
+          <span>Done: <span className="font-semibold text-green-600">{taskCounts.completed}</span></span>
           <span>•</span>
-          <span>Remaining: <span className="font-semibold text-orange-500">{taskCounts.remaining}</span></span>
+          <span>Remaining: <span className="font-semibold text-slate-600">{taskCounts.remaining}</span></span>
         </div>
       </div>
     </div>

@@ -4,25 +4,22 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Updated design system with soft, neutral colors */
+/* Updated design system with the requested color scheme */
 
 :root {
-  --primary-accent: #6366f1;
-  --soft-background: #f8fafc;
+  --primary-accent: #0e1e54;
+  --soft-background: #d6def5;
   --card-background: #ffffff;
   --text-primary: #1e293b;
   --text-secondary: #64748b;
   --border-color: #e2e8f0;
   --shadow-light: rgba(15, 23, 42, 0.08);
   --shadow-medium: rgba(15, 23, 42, 0.12);
-  --accent-teal: #14b8a6;
-  --accent-purple: #8b5cf6;
-  --accent-green: #10b981;
 }
 
 @layer base {
   :root {
-    --background: 248 250 252;
+    --background: 214 222 245;
     --foreground: 30 41 59;
 
     --card: 255 255 255;
@@ -31,7 +28,7 @@
     --popover: 255 255 255;
     --popover-foreground: 30 41 59;
 
-    --primary: 99 102 241;
+    --primary: 14 30 84;
     --primary-foreground: 255 255 255;
 
     --secondary: 241 245 249;
@@ -48,7 +45,7 @@
 
     --border: 226 232 240;
     --input: 226 232 240;
-    --ring: 99 102 241;
+    --ring: 14 30 84;
 
     --radius: 0.75rem;
   }
@@ -62,7 +59,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: #d6def5;
   }
 }
 
@@ -76,7 +73,7 @@
   }
   
   .task-card {
-    background: rgba(255, 255, 255, 0.98);
+    background: #ffffff;
     border: 1px solid rgba(226, 232, 240, 0.6);
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
     transition: all 0.2s ease-in-out;
@@ -89,30 +86,32 @@
   
   .premium-input {
     background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(226, 232, 240, 0.8);
+    border: 1px solid rgba(226, 232, 240, 0.4);
     transition: all 0.2s ease-in-out;
   }
   
   .premium-input:focus {
     background: rgba(255, 255, 255, 1);
-    border-color: var(--primary-accent);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    border-color: #0e1e54;
+    box-shadow: 0 0 0 2px rgba(14, 30, 84, 0.1);
+    outline: none;
   }
   
   .premium-button {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: #0e1e54;
     border: none;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+    box-shadow: 0 2px 8px rgba(14, 30, 84, 0.25);
     transition: all 0.2s ease-in-out;
   }
   
   .premium-button:hover {
+    background: #1a2f6b;
     transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+    box-shadow: 0 4px 16px rgba(14, 30, 84, 0.35);
   }
   
   .stat-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+    background: #ffffff;
     border: 1px solid rgba(226, 232, 240, 0.6);
     transition: all 0.2s ease-in-out;
   }
@@ -166,8 +165,8 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+  background: #0e1e54;
+  box-shadow: 0 4px 20px rgba(14, 30, 84, 0.4);
   z-index: 1000;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
@@ -175,7 +174,8 @@
 
 .fab-button:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 25px rgba(99, 102, 241, 0.5);
+  background: #1a2f6b;
+  box-shadow: 0 6px 25px rgba(14, 30, 84, 0.5);
 }
 
 .modal-overlay {

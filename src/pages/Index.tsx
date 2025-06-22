@@ -78,16 +78,16 @@ const Index = () => {
   }).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="glass-card sticky top-0 z-50 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-primary-accent to-accent-purple rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 bg-primary-accent rounded-xl flex items-center justify-center shadow-lg">
               <Plus className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary-accent to-accent-purple bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-primary-accent">
                 TaskFlow
               </h1>
               <p className="text-sm text-slate-600 font-medium">{user.email}</p>
@@ -172,7 +172,7 @@ const Index = () => {
               <CardContent className="pt-0">
                 {tasksLoading ? (
                   <div className="text-center py-12">
-                    <div className="mx-auto w-12 h-12 bg-gradient-to-br from-primary-accent to-accent-purple rounded-xl flex items-center justify-center mb-4 floating-animation shadow-lg">
+                    <div className="mx-auto w-12 h-12 bg-primary-accent rounded-xl flex items-center justify-center mb-4 floating-animation shadow-lg">
                       <Plus className="h-6 w-6 text-white" />
                     </div>
                     <p className="text-slate-600 font-medium">Loading your tasks...</p>
@@ -224,13 +224,13 @@ const Index = () => {
               </Card>
               <Card className="stat-card rounded-2xl border-0 shadow-lg hover-lift">
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-accent-green mb-1">{taskCounts.completed}</div>
+                  <div className="text-3xl font-bold text-green-600 mb-1">{taskCounts.completed}</div>
                   <div className="text-sm text-slate-600 font-medium">Completed</div>
                 </CardContent>
               </Card>
               <Card className="stat-card rounded-2xl border-0 shadow-lg hover-lift">
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-orange-500 mb-1">{taskCounts.remaining}</div>
+                  <div className="text-3xl font-bold text-slate-600 mb-1">{taskCounts.remaining}</div>
                   <div className="text-sm text-slate-600 font-medium">Remaining</div>
                 </CardContent>
               </Card>
@@ -246,7 +246,7 @@ const Index = () => {
               </CardHeader>
               <CardContent className="space-y-4 pt-0">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-accent-green mb-1">{completedThisWeek}</div>
+                  <div className="text-3xl font-bold text-green-600 mb-1">{completedThisWeek}</div>
                   <div className="text-sm text-slate-600 font-medium">Tasks completed this week</div>
                 </div>
                 
@@ -259,7 +259,7 @@ const Index = () => {
                   </div>
                   <div className="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
                     <div 
-                      className="bg-gradient-to-r from-accent-green to-accent-teal h-3 rounded-full transition-all duration-500 ease-out"
+                      className="bg-primary-accent h-3 rounded-full transition-all duration-500 ease-out"
                       style={{ 
                         width: `${taskCounts.total > 0 ? (taskCounts.completed / taskCounts.total) * 100 : 0}%` 
                       }}

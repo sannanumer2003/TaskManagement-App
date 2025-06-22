@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Calendar, Bell, Tag, Flag, X } from "lucide-react";
+import { Calendar, Bell, Tag, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -79,16 +79,8 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }: TaskEditModalProps) =>
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="modal-content sm:max-w-md border-0 shadow-2xl rounded-2xl">
         <DialogHeader className="pb-4">
-          <DialogTitle className="text-xl font-semibold text-slate-800 flex items-center justify-between">
+          <DialogTitle className="text-xl font-semibold text-slate-800">
             Edit Task
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="rounded-full w-8 h-8 p-0 hover:bg-slate-100"
-            >
-              <X className="h-4 w-4 text-slate-600" />
-            </Button>
           </DialogTitle>
         </DialogHeader>
         
@@ -139,7 +131,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }: TaskEditModalProps) =>
                         <div className={cn(
                           "w-3 h-3 rounded-full",
                           pri === 'High' && "bg-red-500",
-                          pri === 'Medium' && "bg-yellow-500",
+                          pri === 'Medium' && "bg-blue-500",
                           pri === 'Low' && "bg-green-500"
                         )} />
                         {pri}
