@@ -104,37 +104,39 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Subtle Background Elements */}
-      <div className="absolute top-20 left-20 w-72 h-72 bg-primary-accent/5 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse"></div>
-      <div className="absolute top-40 right-20 w-72 h-72 bg-slate-300/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse" style={{ animationDelay: '2s' }}></div>
-      <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-slate-300/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse" style={{ animationDelay: '4s' }}></div>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-soft-lavender via-blue-50 to-primary-accent/10">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-primary-accent/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+        <div className="absolute top-40 right-20 w-72 h-72 bg-soft-lavender/50 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-primary-accent/20 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-4000"></div>
+      </div>
       
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-md">
           {/* Logo Section */}
           <div className="text-center mb-8 floating-animation">
-            <div className="mx-auto w-20 h-20 bg-primary-accent rounded-2xl flex items-center justify-center shadow-lg mb-4">
+            <div className="mx-auto w-20 h-20 gradient-primary rounded-full flex items-center justify-center glow-effect mb-4">
               <Plus className="h-10 w-10 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-primary-accent">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary-accent to-blue-600 bg-clip-text text-transparent">
               TaskFlow
             </h1>
-            <p className="text-slate-600 mt-2 font-medium">
+            <p className="text-gray-600 mt-2 font-medium">
               {isLogin ? "Welcome back to your productivity hub" : "Join thousands of productive users"}
             </p>
           </div>
 
           {/* Auth Card */}
-          <Card className="glass-card border-0 shadow-2xl hover-lift rounded-2xl">
-            <CardHeader className="text-center pb-6">
-              <CardTitle className="text-2xl font-semibold text-slate-800">
+          <Card className="glass-card border-0 shadow-2xl hover-lift">
+            <CardHeader className="text-center pb-4">
+              <CardTitle className="text-2xl font-semibold text-primary-accent">
                 {isLogin ? "Sign In" : "Create Account"}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {errors.general && (
-                <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-xl border border-red-200">
+                <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
                   <AlertCircle className="h-4 w-4 flex-shrink-0" />
                   <span className="text-sm">{errors.general}</span>
                 </div>
@@ -142,7 +144,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-slate-700 font-medium">Email Address</Label>
+                  <Label htmlFor="email" className="text-primary-accent font-medium">Email Address</Label>
                   <Input
                     id="email"
                     type="email"
@@ -152,7 +154,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                       if (errors.email) setErrors(prev => ({...prev, email: ''}));
                     }}
                     placeholder="Enter your email"
-                    className="premium-input h-12 text-slate-800 placeholder:text-slate-500 rounded-xl"
+                    className="glass-input border-0 h-12 text-primary-accent placeholder:text-gray-500 focus:ring-2 focus:ring-primary-accent/30 transition-all duration-300"
                     required
                   />
                   {errors.email && (
@@ -161,7 +163,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-slate-700 font-medium">Password</Label>
+                  <Label htmlFor="password" className="text-primary-accent font-medium">Password</Label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -172,20 +174,20 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                         if (errors.password) setErrors(prev => ({...prev, password: ''}));
                       }}
                       placeholder="Enter your password"
-                      className="premium-input h-12 pr-12 text-slate-800 placeholder:text-slate-500 rounded-xl"
+                      className="glass-input border-0 h-12 pr-12 text-primary-accent placeholder:text-gray-500 focus:ring-2 focus:ring-primary-accent/30 transition-all duration-300"
                       required
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-slate-100 rounded-lg"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-primary-accent/10"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-slate-600" />
+                        <EyeOff className="h-4 w-4 text-primary-accent" />
                       ) : (
-                        <Eye className="h-4 w-4 text-slate-600" />
+                        <Eye className="h-4 w-4 text-primary-accent" />
                       )}
                     </Button>
                   </div>
@@ -196,7 +198,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
 
                 {!isLogin && (
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" className="text-slate-700 font-medium">Confirm Password</Label>
+                    <Label htmlFor="confirmPassword" className="text-primary-accent font-medium">Confirm Password</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
@@ -206,7 +208,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                         if (errors.confirmPassword) setErrors(prev => ({...prev, confirmPassword: ''}));
                       }}
                       placeholder="Confirm your password"
-                      className="premium-input h-12 text-slate-800 placeholder:text-slate-500 rounded-xl"
+                      className="glass-input border-0 h-12 text-primary-accent placeholder:text-gray-500 focus:ring-2 focus:ring-primary-accent/30 transition-all duration-300"
                       required
                     />
                     {errors.confirmPassword && (
@@ -217,7 +219,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
 
                 <Button
                   type="submit"
-                  className="w-full h-12 premium-button text-white font-semibold rounded-xl hover:shadow-lg"
+                  className="w-full h-12 gradient-primary hover:glow-effect font-semibold text-white transition-all duration-300 hover:scale-[1.02]"
                   disabled={loading}
                 >
                   {loading ? "Loading..." : isLogin ? "Sign In" : "Create Account"}
@@ -234,7 +236,7 @@ const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                     setPassword("");
                     setConfirmPassword("");
                   }}
-                  className="text-primary-accent hover:text-slate-700 font-medium"
+                  className="text-primary-accent hover:text-blue-600 font-medium"
                 >
                   {isLogin
                     ? "Don't have an account? Sign up"
