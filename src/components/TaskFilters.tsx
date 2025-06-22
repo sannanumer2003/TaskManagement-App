@@ -24,7 +24,7 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
   const priorities = ['High', 'Medium', 'Low'];
 
   return (
-    <div className="space-y-6 p-6 glass-card border-0 shadow-xl rounded-2xl hover-lift">
+    <div className="space-y-6 p-6 glass-card border-0 shadow-xl rounded-2xl">
       {/* Search Bar */}
       <div className="relative">
         <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-accent/60 h-5 w-5" />
@@ -32,12 +32,12 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
           placeholder="Search your tasks..."
           value={filters.search}
           onChange={(e) => onFiltersChange({ ...filters, search: e.target.value })}
-          className="pl-12 glass-input border-0 h-14 text-primary-accent placeholder:text-gray-500 focus:ring-2 focus:ring-primary-accent/30 transition-all duration-300 text-lg"
+          className="pl-12 border border-gray-200 h-14 text-primary-accent placeholder:text-gray-500 focus:ring-2 focus:ring-primary-accent/30 transition-all duration-300 text-lg"
         />
       </div>
 
       {/* Filters Row */}
-      <div className="flex flex-wrap gap-4 items-center">
+      <div className="flex flex-wrap gap-4 items-start">
         <div className="flex items-center space-x-3">
           <Filter className="h-5 w-5 text-primary-accent" />
           <Label className="text-sm font-semibold text-primary-accent">Filters:</Label>
@@ -45,10 +45,10 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
 
         {/* Category Filter */}
         <Select value={filters.category} onValueChange={(value) => onFiltersChange({ ...filters, category: value })}>
-          <SelectTrigger className="w-[140px] glass-input border-0 h-10 focus:ring-2 focus:ring-primary-accent/30">
+          <SelectTrigger className="w-[140px] border border-gray-200 h-10 focus:ring-2 focus:ring-primary-accent/30">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
-          <SelectContent className="glass-card border-0">
+          <SelectContent className="bg-white border border-gray-200">
             <SelectItem value="all" className="hover:bg-primary-accent/10">All Categories</SelectItem>
             {categories.map(category => (
               <SelectItem key={category} value={category} className="hover:bg-primary-accent/10">{category}</SelectItem>
@@ -58,10 +58,10 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
 
         {/* Priority Filter */}
         <Select value={filters.priority} onValueChange={(value) => onFiltersChange({ ...filters, priority: value })}>
-          <SelectTrigger className="w-[130px] glass-input border-0 h-10 focus:ring-2 focus:ring-primary-accent/30">
+          <SelectTrigger className="w-[130px] border border-gray-200 h-10 focus:ring-2 focus:ring-primary-accent/30">
             <SelectValue placeholder="Priority" />
           </SelectTrigger>
-          <SelectContent className="glass-card border-0">
+          <SelectContent className="bg-white border border-gray-200">
             <SelectItem value="all" className="hover:bg-primary-accent/10">All Priorities</SelectItem>
             {priorities.map(priority => (
               <SelectItem key={priority} value={priority} className="hover:bg-primary-accent/10">{priority}</SelectItem>
@@ -70,7 +70,7 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
         </Select>
 
         {/* Show Completed Toggle */}
-        <div className="flex items-center space-x-3 p-3 glass-input rounded-lg">
+        <div className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
           <Switch
             id="show-completed"
             checked={filters.showCompleted}
@@ -80,13 +80,13 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
           <Label htmlFor="show-completed" className="text-sm font-medium text-primary-accent">Show completed</Label>
         </div>
 
-        {/* Mark All Completed Button */}
+        {/* Mark All Completed Button - Left aligned */}
         <Button
           variant="outline"
           size="sm"
           onClick={onMarkAllCompleted}
           disabled={taskCounts.remaining === 0}
-          className="ml-auto glass-input border-0 font-semibold text-primary-accent hover:bg-primary-accent/10 h-10 transition-all duration-300"
+          className="border border-gray-200 font-semibold text-primary-accent hover:bg-primary-accent/10 h-10 transition-all duration-300"
         >
           <CheckSquare className="h-4 w-4 mr-2" />
           Mark All Done
@@ -101,12 +101,12 @@ const TaskFilters = ({ filters, onFiltersChange, taskCounts, onMarkAllCompleted 
           </Badge>
         )}
         {filters.category !== 'all' && (
-          <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 font-medium px-3 py-1">
+          <Badge className="bg-green-100 text-green-800 font-medium px-3 py-1">
             {filters.category}
           </Badge>
         )}
         {filters.priority !== 'all' && (
-          <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200 font-medium px-3 py-1">
+          <Badge className="bg-orange-100 text-orange-800 font-medium px-3 py-1">
             {filters.priority} Priority
           </Badge>
         )}

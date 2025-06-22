@@ -64,7 +64,7 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
     <>
       <div
         className={cn(
-          "bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 space-y-3 transition-all duration-200",
+          "bg-white rounded-lg border border-gray-200 p-4 space-y-3 transition-all duration-200",
           task.completed && "opacity-75",
           isDueSoon && !task.completed && "border-l-4 border-l-red-500"
         )}
@@ -78,56 +78,88 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
             className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 mt-0.5 cursor-pointer"
           />
           
-          <div className="flex-1 space-y-2">
-            {/* Task Text and Priority */}
+          <div className="flex-1 space-y-3">
+            {/* Task Text */}
             <div className="flex items-start justify-between gap-2">
               <span className={cn(
                 "text-sm font-medium flex-1",
                 task.completed 
-                  ? 'text-gray-500 dark:text-gray-400 line-through' 
-                  : 'text-gray-800 dark:text-gray-200'
+                  ? 'text-gray-500 line-through' 
+                  : 'text-gray-800'
               )}>
                 {task.text}
               </span>
-              
-              <div className="flex items-center gap-1">
+            </div>
+
+            {/* Mobile: Badges at bottom + Action buttons on right */}
+            <div className="flex items-end justify-between">
+              {/* Badges */}
+              <div className="flex flex-wrap gap-1 items-center flex-1">
+                <Badge variant="outline" className={getCategoryColor(task.category)}>
+                  <Tag className="h-3 w-3 mr-1" />
+                  {task.category}
+                </Badge>
+                
                 <Badge variant="secondary" className={getPriorityColor(task.priority)}>
                   <Flag className="h-3 w-3 mr-1" />
                   {task.priority}
                 </Badge>
+                
+                {task.due_date && (
+                  <Badge variant="outline" className={cn(
+                    "text-xs",
+                    isDueSoon ? "bg-red-50 text-red-700 border-red-200" : 
+                    "bg-blue-50 text-blue-700 border-blue-200"
+                  )}>
+                    <Calendar className="h-3 w-3 mr-1" />
+                    {format(new Date(task.due_date), "MMM d")}
+                  </Badge>
+                )}
+                
+                {task.reminder_enabled && (
+                  <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                    <Bell className="h-3 w-3 mr-1" />
+                    Reminder
+                  </Badge>
+                )}
+                
+                {task.recurring_type !== 'none' && (
+                  <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                    {task.recurring_type}
+                  </Badge>
+                )}
               </div>
-            </div>
 
-            {/* Badges Row */}
-            <div className="flex flex-wrap gap-1 items-center">
-              <Badge variant="outline" className={getCategoryColor(task.category)}>
-                <Tag className="h-3 w-3 mr-1" />
-                {task.category}
-              </Badge>
-              
-              {task.due_date && (
-                <Badge variant="outline" className={cn(
-                  "text-xs",
-                  isDueSoon ? "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300" : 
-                  "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300"
-                )}>
-                  <Calendar className="h-3 w-3 mr-1" />
-                  {format(new Date(task.due_date), "MMM d")}
-                </Badge>
-              )}
-              
-              {task.reminder_enabled && (
-                <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300">
-                  <Bell className="h-3 w-3 mr-1" />
-                  Reminder
-                </Badge>
-              )}
-              
-              {task.recurring_type !== 'none' && (
-                <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300">
-                  {task.recurring_type}
-                </Badge>
-              )}
+              {/* Action Buttons */}
+              <div className="flex gap-1 ml-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSubtaskForm(!showSubtaskForm)}
+                  className="h-8 w-8 p-0 text-gray-400 hover:text-blue-500"
+                  title="Add subtask"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowEditModal(true)}
+                  className="h-8 w-8 p-0 text-gray-400 hover:text-blue-500"
+                  title="Edit task"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onDelete(task.id)}
+                  className="h-8 w-8 p-0 text-gray-400 hover:text-red-500"
+                  title="Delete task"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             {/* Subtasks Section */}
@@ -155,8 +187,8 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
                         />
                         <span className={cn(
                           subtask.completed 
-                            ? 'text-gray-500 dark:text-gray-400 line-through' 
-                            : 'text-gray-700 dark:text-gray-300'
+                            ? 'text-gray-500 line-through' 
+                            : 'text-gray-700'
                         )}>
                           {subtask.text}
                         </span>
@@ -198,37 +230,6 @@ const TaskItem = ({ task, onToggle, onDelete, onAddSubtask, onUpdateTask }: Task
                 </Button>
               </div>
             )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowSubtaskForm(!showSubtaskForm)}
-              className="h-8 w-8 p-0 text-gray-400 hover:text-blue-500"
-              title="Add subtask"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowEditModal(true)}
-              className="h-8 w-8 p-0 text-gray-400 hover:text-blue-500"
-              title="Edit task"
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onDelete(task.id)}
-              className="h-8 w-8 p-0 text-gray-400 hover:text-red-500"
-              title="Delete task"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
           </div>
         </div>
       </div>

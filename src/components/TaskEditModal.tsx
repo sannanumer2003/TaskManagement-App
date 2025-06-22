@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Calendar, Bell, Tag, Flag, X } from "lucide-react";
+import { Calendar, Bell, Tag, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -77,18 +77,10 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }: TaskEditModalProps) =>
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md glass-card border-0 shadow-2xl animate-scale-in">
+      <DialogContent className="sm:max-w-md bg-white border-0 shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-primary-accent flex items-center justify-between">
+          <DialogTitle className="text-xl font-semibold text-primary-accent">
             Edit Task
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="rounded-full w-8 h-8 p-0 hover:bg-primary-accent/10"
-            >
-              <X className="h-4 w-4 text-primary-accent" />
-            </Button>
           </DialogTitle>
         </DialogHeader>
         
@@ -100,7 +92,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }: TaskEditModalProps) =>
               value={taskText}
               onChange={(e) => setTaskText(e.target.value)}
               placeholder="What needs to be done?"
-              className="glass-input border-0 h-12 text-primary-accent placeholder:text-gray-500 focus:ring-2 focus:ring-primary-accent/30 transition-all duration-300"
+              className="border border-gray-200 h-12 text-primary-accent placeholder:text-gray-500 focus:ring-2 focus:ring-primary-accent/30 transition-all duration-300"
             />
           </div>
 
@@ -112,10 +104,10 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }: TaskEditModalProps) =>
                 Category
               </Label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="glass-input border-0 h-12 focus:ring-2 focus:ring-primary-accent/30">
+                <SelectTrigger className="border border-gray-200 h-12 focus:ring-2 focus:ring-primary-accent/30">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="glass-card border-0">
+                <SelectContent className="bg-white border border-gray-200">
                   {categories.map(cat => (
                     <SelectItem key={cat} value={cat} className="hover:bg-primary-accent/10">{cat}</SelectItem>
                   ))}
@@ -129,10 +121,10 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }: TaskEditModalProps) =>
                 Priority
               </Label>
               <Select value={priority} onValueChange={(value) => setPriority(value as 'High' | 'Medium' | 'Low')}>
-                <SelectTrigger className="glass-input border-0 h-12 focus:ring-2 focus:ring-primary-accent/30">
+                <SelectTrigger className="border border-gray-200 h-12 focus:ring-2 focus:ring-primary-accent/30">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="glass-card border-0">
+                <SelectContent className="bg-white border border-gray-200">
                   {priorities.map(pri => (
                     <SelectItem key={pri} value={pri} className="hover:bg-primary-accent/10">
                       <div className="flex items-center gap-2">
@@ -163,7 +155,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }: TaskEditModalProps) =>
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal glass-input border-0 h-12 hover:bg-primary-accent/5",
+                      "w-full justify-start text-left font-normal border border-gray-200 h-12 hover:bg-primary-accent/5",
                       !dueDate && "text-gray-500"
                     )}
                   >
@@ -171,7 +163,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }: TaskEditModalProps) =>
                     {dueDate ? format(dueDate, "MMM d, yyyy") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 glass-card border-0" align="start">
+                <PopoverContent className="w-auto p-0 bg-white border border-gray-200" align="start">
                   <CalendarComponent
                     mode="single"
                     selected={dueDate}
@@ -186,10 +178,10 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }: TaskEditModalProps) =>
             <div className="space-y-2">
               <Label className="text-sm font-semibold text-primary-accent">Recurring</Label>
               <Select value={recurringType} onValueChange={(value) => setRecurringType(value as 'none' | 'daily' | 'weekly' | 'monthly')}>
-                <SelectTrigger className="glass-input border-0 h-12 focus:ring-2 focus:ring-primary-accent/30">
+                <SelectTrigger className="border border-gray-200 h-12 focus:ring-2 focus:ring-primary-accent/30">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="glass-card border-0">
+                <SelectContent className="bg-white border border-gray-200">
                   {recurringOptions.map(option => (
                     <SelectItem key={option.value} value={option.value} className="hover:bg-primary-accent/10">
                       {option.label}
@@ -201,7 +193,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }: TaskEditModalProps) =>
           </div>
 
           {/* Reminder Toggle */}
-          <div className="flex items-center space-x-3 p-4 glass-input rounded-lg">
+          <div className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg">
             <Switch
               id="reminder"
               checked={reminderEnabled}
@@ -218,7 +210,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }: TaskEditModalProps) =>
           <div className="flex gap-3 pt-4">
             <Button 
               onClick={handleSave}
-              className="flex-1 gradient-primary hover:glow-effect font-semibold text-white h-12 transition-all duration-300 hover:scale-[1.02]"
+              className="flex-1 bg-primary-accent hover:bg-primary-accent/90 font-semibold text-white h-12 transition-all duration-300"
               disabled={!taskText.trim()}
             >
               Save Changes
@@ -226,7 +218,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onSave }: TaskEditModalProps) =>
             <Button 
               variant="outline" 
               onClick={handleCancel}
-              className="flex-1 glass-input border-0 font-semibold text-primary-accent hover:bg-primary-accent/10 h-12 transition-all duration-300"
+              className="flex-1 border border-gray-200 font-semibold text-primary-accent hover:bg-primary-accent/10 h-12 transition-all duration-300"
             >
               Cancel
             </Button>

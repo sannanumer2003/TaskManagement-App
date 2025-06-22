@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Plus, LogOut, Moon, Sun, BarChart3 } from "lucide-react";
+import { Plus, LogOut, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
@@ -36,7 +36,7 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-soft-lavender via-blue-50 to-primary-accent/10 flex items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto w-16 h-16 gradient-primary rounded-full flex items-center justify-center mb-4 glow-effect floating-animation">
+          <div className="mx-auto w-16 h-16 gradient-primary rounded-full flex items-center justify-center mb-4 glow-effect">
             <Plus className="h-8 w-8 text-white" />
           </div>
           <p className="text-primary-accent font-medium">Loading your productivity hub...</p>
@@ -77,8 +77,8 @@ const Index = () => {
     <div className="min-h-screen relative overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-soft-lavender/30 via-blue-50 to-primary-accent/5">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-accent/5 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-soft-lavender/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-pulse animation-delay-2000"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-accent/5 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-soft-lavender/30 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
       </div>
 
       {/* Header */}
@@ -97,23 +97,11 @@ const Index = () => {
           </div>
           
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => updateTheme(preferences?.theme === 'dark' ? 'light' : 'dark')}
-              className="hover:bg-primary-accent/10 text-primary-accent rounded-full w-10 h-10 p-0"
-            >
-              {preferences?.theme === 'dark' ? 
-                <Sun className="h-5 w-5" /> : 
-                <Moon className="h-5 w-5" />
-              }
-            </Button>
-            
             <Button 
               onClick={signOut}
               variant="outline" 
               size="sm"
-              className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-300 rounded-full font-medium"
+              className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 rounded-full font-medium"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Logout
@@ -137,7 +125,7 @@ const Index = () => {
         {/* Mobile Task Form Modal */}
         {showMobileForm && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 md:hidden">
-            <div className="glass-card rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
               <div className="p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-semibold text-primary-accent">Add New Task</h2>
@@ -145,7 +133,7 @@ const Index = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowMobileForm(false)}
-                    className="rounded-full w-8 h-8 p-0"
+                    className="rounded-full w-8 h-8 p-0 text-primary-accent hover:bg-gray-100"
                   >
                     ×
                   </Button>
@@ -176,7 +164,7 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Tasks List */}
           <div className="lg:col-span-2">
-            <Card className="glass-card border-0 shadow-xl hover-lift">
+            <Card className="glass-card border-0 shadow-xl">
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-primary-accent flex items-center justify-between">
                   Your Tasks
@@ -188,7 +176,7 @@ const Index = () => {
               <CardContent>
                 {tasksLoading ? (
                   <div className="text-center py-12">
-                    <div className="mx-auto w-12 h-12 gradient-primary rounded-full flex items-center justify-center mb-4 floating-animation">
+                    <div className="mx-auto w-12 h-12 gradient-primary rounded-full flex items-center justify-center mb-4">
                       <Plus className="h-6 w-6 text-white" />
                     </div>
                     <p className="text-primary-accent font-medium">Loading your tasks...</p>
@@ -207,21 +195,15 @@ const Index = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {tasks.map((task, index) => (
-                      <div 
-                        key={task.id} 
-                        className="animate-fade-in"
-                        style={{ animationDelay: `${index * 0.1}s` }}
-                      >
-                        <TaskItem
-                          task={task}
-                          onToggle={toggleTask}
-                          onDelete={deleteTask}
-                          onAddSubtask={handleAddSubtask}
-                          onUpdateTask={updateTask}
-                          onEdit={setEditingTask}
-                        />
-                      </div>
+                    {tasks.map((task) => (
+                      <TaskItem
+                        key={task.id}
+                        task={task}
+                        onToggle={toggleTask}
+                        onDelete={deleteTask}
+                        onAddSubtask={handleAddSubtask}
+                        onUpdateTask={updateTask}
+                      />
                     ))}
                   </div>
                 )}
@@ -233,19 +215,19 @@ const Index = () => {
           <div className="space-y-6">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 gap-4">
-              <Card className="gradient-primary text-white border-0 shadow-xl hover-lift">
+              <Card className="gradient-primary text-white border-0 shadow-xl">
                 <CardContent className="p-6 text-center">
                   <div className="text-3xl font-bold mb-1">{taskCounts.total}</div>
                   <div className="text-sm opacity-90 font-medium">Total Tasks</div>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0 shadow-xl hover-lift">
+              <Card className="bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0 shadow-xl">
                 <CardContent className="p-6 text-center">
                   <div className="text-3xl font-bold mb-1">{taskCounts.completed}</div>
                   <div className="text-sm opacity-90 font-medium">Completed</div>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-orange-500 to-amber-600 text-white border-0 shadow-xl hover-lift">
+              <Card className="bg-gradient-to-br from-orange-500 to-amber-600 text-white border-0 shadow-xl">
                 <CardContent className="p-6 text-center">
                   <div className="text-3xl font-bold mb-1">{taskCounts.remaining}</div>
                   <div className="text-sm opacity-90 font-medium">Remaining</div>
@@ -254,7 +236,7 @@ const Index = () => {
             </div>
 
             {/* Weekly Progress */}
-            <Card className="glass-card border-0 shadow-xl hover-lift">
+            <Card className="glass-card border-0 shadow-xl">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-primary-accent flex items-center gap-2">
                   <BarChart3 className="h-5 w-5" />
